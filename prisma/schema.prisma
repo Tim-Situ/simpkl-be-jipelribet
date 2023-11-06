@@ -1,0 +1,363 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum RoleUser {
+  ADMINSEKOLAH  @map("Admin Sekolah")
+  PEMBIMBING    @map("Pembimbing")
+  SISWA         @map("Siswa")
+  INSTRUKTUR    @map("Instruktur")
+  PERUSAHAAN    @map("Perusahaan")
+  ORTU          @map("Orang Tua")
+}
+
+enum EnumAbsensi {
+  HADIR   @map("Hadir")
+  LIBUR   @map("Libur")
+  SAKIT   @map("Sakit")
+  ALPA    @map("Alpa")
+  IZIN    @map("Izin")
+}
+
+model User{
+  id        String    @id @default(uuid())
+  username  String    @db.VarChar(50) @unique
+  password  String
+  role      RoleUser
+
+  createdBy String?
+  updatedBy String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+
+  dataAdminSekolah    AdminSekolah[]
+  dataSiswa           Siswa[]
+  dataGuruPembimbing  GuruPembimbing[]
+  dataInstruktur      Instruktur[]
+  dataPerusahaan      Perusahaan[]
+
+  @@map("user")
+}
+
+model AdminSekolah{
+  id          String    @id @default(uuid())
+  username    String    @db.VarChar(50) @unique
+  nama        String    @db.VarChar(100)
+  alamat      String    @db.Text
+  no_hp       String    @db.VarChar(20)
+
+  createdBy   String?
+  updatedBy   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+
+  user User @relation(fields: [username], references: [username])
+
+  @@map("admin_sekolah")
+}
+
+model Siswa{
+  id              String    @id @default(uuid())
+  id_jurusan      String
+  nis             String    @db.VarChar(50)
+  nisn            String    @db.VarChar(50) @unique
+  nama            String    @db.VarChar(100)
+  alamat          String    @db.Text
+  no_hp           String    @db.VarChar(20)
+  tempat_lahir    String    @db.VarChar(100)
+  tanggal_lahir   DateTime  @db.Date
+
+  createdBy       String?
+  updatedBy       String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime
+
+  user    User    @relation(fields: [nisn], references: [username])
+  jurusan Jurusan @relation(fields: [id_jurusan], references: [id])
+
+  nilai_akhir       NilaiAkhir[]
+  kelompok_bimbingan KelompokBimbingan[]
+
+  @@map("siswa")
+}
+
+model GuruPembimbing{
+  id              String    @id @default(uuid())
+  nip             String    @db.VarChar(50) @unique
+  nama            String    @db.VarChar(100)
+  alamat          String    @db.Text
+  no_hp           String    @db.VarChar(25)
+
+  createdBy       String?
+  updatedBy       String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime
+
+  user User @relation(fields: [nip], references: [username])
+
+  kelompok_bimbingan KelompokBimbingan[]
+
+  @@map("guru_pembimbing")
+}
+
+model Instruktur{
+  id              String    @id @default(uuid())
+  id_perusahaan   String
+  username        String    @db.VarChar(20) @unique
+  nama            String    @db.VarChar(100)
+  no_hp           String    @db.VarChar(25)
+  status_aktif    Boolean   @default(true)
+
+  createdBy       String?
+  updatedBy       String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime
+
+  user        User @relation(fields: [username], references: [username])
+  perusahaan  Perusahaan @relation(fields: [id_perusahaan], references: [id])
+
+  kelompok_bimbingan KelompokBimbingan[]
+
+  @@map("instruktur")
+}
+
+model Perusahaan{
+  id                String    @id @default(uuid())
+  username          String    @db.VarChar(20) @unique
+  nama_perusahaan   String    @db.VarChar(100)
+  pimpinan          String    @db.VarChar(100)
+  alamat            String    @db.Text
+  no_hp             String    @db.VarChar(25)
+  email             String?
+  website           String?
+
+  createdBy         String?
+  updatedBy         String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime
+
+  instruktur          Instruktur[]
+  kelompok_bimbingan  KelompokBimbingan[]
+
+  user User @relation(fields: [username], references: [username])
+
+  @@map("perusahaan")
+}
+
+model Jurusan{
+  id                    String    @id @default(uuid())
+  bidang_keahlian       String    @db.VarChar(225)
+  program_keahlian      String    @db.VarChar(225)
+  kompetensi_keahlian   String    @db.VarChar(225)
+
+  createdBy             String?
+  updatedBy             String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime
+
+  siswa Siswa[]
+
+  @@map("jurusan")
+}
+
+model KelompokBimbingan{
+  id                  String    @id @default(uuid())
+  id_siswa            String    
+  id_guru_pembimbing  String    
+  id_instruktur       String    
+  id_perusahaan       String    
+  id_tahun_ajaran     String    
+  status              Boolean   @default(true)
+
+  createdBy           String?
+  updatedBy           String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime
+
+  siswa           Siswa @relation(fields: [id_siswa], references: [id])
+  guru_pembimbing GuruPembimbing @relation(fields: [id_guru_pembimbing], references: [id])
+  instruktur      Instruktur @relation(fields: [id_instruktur], references: [id])
+  perusahaan      Perusahaan @relation(fields: [id_perusahaan], references: [id])
+  tahun_ajaran    TahunAjaran @relation(fields: [id_tahun_ajaran], references: [id])
+
+  jurnal_harian   JurnalHarian[]
+  jurnal_bulanan  JurnalBulanan[]
+  nilai_bulanan   NilaiBulanan[]
+  absensi         Absensi[]
+
+  @@map("kelompok_bimbingan")
+}
+
+model NilaiAkhir{
+  id                  String    @id @default(uuid())
+  id_siswa            String    
+  id_aspek_penilaian  String    
+  nilai               Int
+  keterangan          String    @db.Text
+
+  createdBy           String?
+  updatedBy           String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime
+
+  siswa           Siswa @relation(fields: [id_siswa], references: [id])
+  aspek_penilaian AspekPenilaian @relation(fields: [id_aspek_penilaian], references: [id])
+
+  @@map("nilai_akhir")
+}
+
+model AspekPenilaian{
+  id                  String    @id @default(uuid())
+  id_kategori_nilai   String    
+  judul               String    @db.VarChar(100)
+
+  createdBy           String?
+  updatedBy           String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime
+
+  nilai_akhir NilaiAkhir[]
+
+  kategori_nilai KategoriNilai @relation(fields: [id_kategori_nilai], references: [id])
+
+  @@map("aspek_penilaian")
+}
+
+model KategoriNilai{
+  id          String    @id @default(uuid())
+  kode        String
+  judul       String    @db.VarChar(100)
+
+  createdBy   String?
+  updatedBy   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+
+  aspek_penilaian AspekPenilaian[]
+
+  @@map("kategori_nilai")
+}
+
+model NilaiBulanan{
+  id                        String    @id @default(uuid())
+  id_tujuan_pembelajaran    String    
+  id_bimbingan              String    
+  bulan                     Int    
+  tahun                     Int
+  nilai                     Int 
+  deskripsi                 String    @db.Text
+
+  createdBy                 String?
+  updatedBy                 String?
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime
+
+  kelompok_bimbingan   KelompokBimbingan @relation(fields: [id_bimbingan], references: [id])
+  tujuan_pembelajaran  TujuanPembelajaran @relation(fields: [id_tujuan_pembelajaran], references: [id])
+
+  @@map("nilai_bulanan")
+}
+
+model TujuanPembelajaran{
+  id                        String    @id @default(uuid())
+  judul                     String    @db.VarChar(100)
+  deskripsi                 String    @db.Text
+
+  createdBy                 String?
+  updatedBy                 String?
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime
+
+  nilai_bulanan NilaiBulanan[]
+
+  @@map("tujuan_pembelajaran")
+}
+
+model TahunAjaran{
+  id              String    @id @default(uuid())
+  tahun_ajaran    String    @db.VarChar(100)
+  status          String    @db.Text
+
+  createdBy       String?
+  updatedBy       String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime
+
+  kelompok_bimbingan KelompokBimbingan[]
+
+  @@map("tahun_ajaran")
+}
+
+model JurnalHarian{
+  id                    String    @id @default(uuid())
+  id_bimbingan          String    
+  hari                  String    @db.VarChar(10)
+  tanggal               DateTime  @db.Date
+  jenis_pekerjaan       String?   @db.Text
+  deskripsi_pekerjaan   String    @db.Text
+  bentuk_kegiatan       String?   @db.Text
+  jam_mulai             DateTime  @db.Time()
+  jam_selesai           DateTime  @db.Time()
+  staf                  String    @db.VarChar(100)
+  foto                  String    @db.Text
+  catatan_instruktur    String?   @db.Text
+  catatan_pembimbing    String?   @db.Text
+
+  createdBy             String?
+  updatedBy             String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime
+
+  kelompok_bimbingan   KelompokBimbingan @relation(fields: [id_bimbingan], references: [id])
+
+  @@map("jurnal_harian")
+}
+
+model JurnalBulanan{
+  id                    String    @id @default(uuid())
+  id_bimbingan          String    
+  bulan                 Int
+  tahun                 Int
+  nama_pekerjaan        String?   @db.Text
+  uraian                String    @db.Text
+  foto                  String    @db.Text
+  catatan_instruktur    String?   @db.Text
+  catatan_pembimbing    String?   @db.Text
+
+  createdBy             String?
+  updatedBy             String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime
+
+  kelompok_bimbingan   KelompokBimbingan @relation(fields: [id_bimbingan], references: [id])
+
+  @@map("jurnal_bulanan")
+}
+
+model Absensi{
+  id              String        @id @default(uuid())
+  id_bimbingan    String        
+  tanggal         DateTime      @db.Date
+  status          EnumAbsensi   @default(ALPA)
+
+  createdBy       String?
+  updatedBy       String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime
+
+  kelompok_bimbingan   KelompokBimbingan @relation(fields: [id_bimbingan], references: [id])
+
+  @@map("absensi")
+}
+
+
+
+
