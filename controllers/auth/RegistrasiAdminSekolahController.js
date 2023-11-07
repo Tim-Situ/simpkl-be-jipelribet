@@ -1,4 +1,5 @@
 var Joi = require("joi")
+var bcrypt = require("bcrypt")
 
 var userService = require("../../services/Users")
 const BaseResponse = require("../../dto/BaseResponse")
@@ -23,8 +24,11 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    var { username, nama, alamat, no_hp } = value
+    var { username, password, nama, alamat, no_hp } = value
     var role = "ADMINSEKOLAH"
+
+    const salt = await bcrypt.genSalt();
+    const hashPassword = await bcrypt.hash(password, salt)
 
     var newAdminSekolah = await userService.registerAdminSekolah({
         username,
@@ -41,7 +45,7 @@ async function handler(req, res) {
 
     var newUser = await userService.createUser({
         username,
-        password,
+        password : hashPassword,
         role
     })
 
