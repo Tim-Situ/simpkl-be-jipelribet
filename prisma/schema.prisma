@@ -28,15 +28,16 @@ enum EnumAbsensi {
 }
 
 model User{
-  id        String    @id @default(uuid())
-  username  String    @db.VarChar(50) @unique
-  password  String
-  role      RoleUser
+  id            String    @id @default(uuid())
+  username      String    @db.VarChar(50) @unique
+  password      String
+  role          RoleUser
+  refresh_token String?   @db.Text
 
-  createdBy String?
-  updatedBy String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime
+  createdBy     String?
+  updatedBy     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime
 
   dataAdminSekolah    AdminSekolah[]
   dataSiswa           Siswa[]
