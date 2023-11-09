@@ -25,7 +25,7 @@ async function getAll(){
 
 async function findOne(where){
     try {
-        var data = await jurusan.findFirst({
+        var data = await jurusan.findFirstOrThrow({
             where
         })
 
