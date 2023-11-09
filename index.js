@@ -2,15 +2,25 @@ const express = require("express")
 var cookieParser = require("cookie-parser")
 var cors = require('cors')
 var dotenv = require('dotenv')
+const bodyParser = require('body-parser');
+
 dotenv.config()
+
 const app = express()
 app.use(cookieParser())
 app.use(cors())
 app.use(express.json())
 
-app.get('/tes', function (req, res) {
-    res.send('Hello World!')
-})
+app.use(
+    bodyParser.urlencoded({
+        extended: true,
+    }),
+);
+
+// Route
+app.use("/auth", require("./routes/Auth"))
+app.use("/tes", require("./routes/Tes"))
+app.use("/tahun-ajaran", require("./routes/TahunAjaran"))
 
 
 app.listen(process.env.APP_PORT, () => {
