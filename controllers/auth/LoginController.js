@@ -28,7 +28,7 @@ async function handler(req, res) {
         username
     })
 
-    if(!dataUser.success){
+    if(dataUser.success && dataUser.data == null){
         result.success = false
         result.message = "Username tidak ditemukan..."
         return res.status(404).json(result)

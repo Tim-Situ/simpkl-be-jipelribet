@@ -35,7 +35,7 @@ async function handler(req, res) {
         const role = dataUser.data.role
 
         const accessToken = jwt.sign({userId, username, role}, process.env.ACCESS_TOKEN_SECRET, {
-            expiresIn: '15s' // 15s
+            expiresIn: '1h' // 15s
         })
 
         result.message = "Berhasil generate refresh token..."
