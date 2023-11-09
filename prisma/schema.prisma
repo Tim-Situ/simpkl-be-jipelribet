@@ -31,6 +31,7 @@ model User{
   id            String    @id @default(uuid())
   username      String    @db.VarChar(50) @unique
   password      String
+  temp_password String?
   role          RoleUser
   refresh_token String?   @db.Text
 
@@ -75,6 +76,7 @@ model Siswa{
   no_hp           String    @db.VarChar(20)
   tempat_lahir    String    @db.VarChar(100)
   tanggal_lahir   DateTime  @db.Date
+  status_aktif    Boolean   @default(true)
 
   createdBy       String?
   updatedBy       String?
@@ -96,6 +98,7 @@ model GuruPembimbing{
   nama            String    @db.VarChar(100)
   alamat          String    @db.Text
   no_hp           String    @db.VarChar(25)
+  status_aktif    Boolean   @default(true)
 
   createdBy       String?
   updatedBy       String?
