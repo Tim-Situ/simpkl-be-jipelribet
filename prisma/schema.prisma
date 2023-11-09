@@ -36,8 +36,8 @@ model User{
 
   createdBy     String?
   updatedBy     String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime?  @default(now())
+  updatedAt     DateTime?  @default(now())
 
   dataAdminSekolah    AdminSekolah[]
   dataSiswa           Siswa[]
@@ -57,8 +57,8 @@ model AdminSekolah{
 
   createdBy   String?
   updatedBy   String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime?  @default(now())
+  updatedAt   DateTime?  @default(now())
 
   user User @relation(fields: [username], references: [username])
 
@@ -78,8 +78,8 @@ model Siswa{
 
   createdBy       String?
   updatedBy       String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime?  @default(now())
+  updatedAt       DateTime?  @default(now())
 
   user    User    @relation(fields: [nisn], references: [username])
   jurusan Jurusan @relation(fields: [id_jurusan], references: [id])
@@ -99,8 +99,8 @@ model GuruPembimbing{
 
   createdBy       String?
   updatedBy       String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime?  @default(now())
+  updatedAt       DateTime?  @default(now())
 
   user User @relation(fields: [nip], references: [username])
 
@@ -119,8 +119,8 @@ model Instruktur{
 
   createdBy       String?
   updatedBy       String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime?  @default(now())
+  updatedAt       DateTime?  @default(now())
 
   user        User @relation(fields: [username], references: [username])
   perusahaan  Perusahaan @relation(fields: [id_perusahaan], references: [id])
@@ -142,8 +142,8 @@ model Perusahaan{
 
   createdBy         String?
   updatedBy         String?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  createdAt         DateTime?  @default(now())
+  updatedAt         DateTime?  @default(now())
 
   instruktur          Instruktur[]
   kelompok_bimbingan  KelompokBimbingan[]
@@ -161,8 +161,8 @@ model Jurusan{
 
   createdBy             String?
   updatedBy             String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  createdAt             DateTime?  @default(now())
+  updatedAt             DateTime?  @default(now())
 
   siswa Siswa[]
 
@@ -180,8 +180,8 @@ model KelompokBimbingan{
 
   createdBy           String?
   updatedBy           String?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  createdAt           DateTime?  @default(now())
+  updatedAt           DateTime?  @default(now())
 
   siswa           Siswa @relation(fields: [id_siswa], references: [id])
   guru_pembimbing GuruPembimbing @relation(fields: [id_guru_pembimbing], references: [id])
@@ -206,8 +206,8 @@ model NilaiAkhir{
 
   createdBy           String?
   updatedBy           String?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  createdAt           DateTime?  @default(now())
+  updatedAt           DateTime?  @default(now())
 
   siswa           Siswa @relation(fields: [id_siswa], references: [id])
   aspek_penilaian AspekPenilaian @relation(fields: [id_aspek_penilaian], references: [id])
@@ -222,8 +222,8 @@ model AspekPenilaian{
 
   createdBy           String?
   updatedBy           String?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  createdAt           DateTime?  @default(now())
+  updatedAt           DateTime?  @default(now())
 
   nilai_akhir NilaiAkhir[]
 
@@ -239,8 +239,8 @@ model KategoriNilai{
 
   createdBy   String?
   updatedBy   String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime?  @default(now())
+  updatedAt   DateTime?  @default(now())
 
   aspek_penilaian AspekPenilaian[]
 
@@ -258,8 +258,8 @@ model NilaiBulanan{
 
   createdBy                 String?
   updatedBy                 String?
-  createdAt                 DateTime  @default(now())
-  updatedAt                 DateTime  @updatedAt
+  createdAt                 DateTime?  @default(now())
+  updatedAt                 DateTime?  @default(now())
 
   kelompok_bimbingan   KelompokBimbingan @relation(fields: [id_bimbingan], references: [id])
   tujuan_pembelajaran  TujuanPembelajaran @relation(fields: [id_tujuan_pembelajaran], references: [id])
@@ -274,8 +274,8 @@ model TujuanPembelajaran{
 
   createdBy                 String?
   updatedBy                 String?
-  createdAt                 DateTime  @default(now())
-  updatedAt                 DateTime  @updatedAt
+  createdAt                 DateTime?  @default(now())
+  updatedAt                 DateTime?  @default(now())
 
   nilai_bulanan NilaiBulanan[]
 
@@ -285,12 +285,12 @@ model TujuanPembelajaran{
 model TahunAjaran{
   id              String    @id @default(uuid())
   tahun_ajaran    String    @db.VarChar(100)
-  status          String    @db.Text
+  status          Boolean   @default(false)  
 
   createdBy       String?
   updatedBy       String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime?  @default(now())
+  updatedAt       DateTime?  @default(now())
 
   kelompok_bimbingan KelompokBimbingan[]
 
@@ -314,8 +314,8 @@ model JurnalHarian{
 
   createdBy             String?
   updatedBy             String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  createdAt             DateTime?  @default(now())
+  updatedAt             DateTime?  @default(now())
 
   kelompok_bimbingan   KelompokBimbingan @relation(fields: [id_bimbingan], references: [id])
 
@@ -335,8 +335,8 @@ model JurnalBulanan{
 
   createdBy             String?
   updatedBy             String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  createdAt             DateTime?  @default(now())
+  updatedAt             DateTime?  @default(now())
 
   kelompok_bimbingan   KelompokBimbingan @relation(fields: [id_bimbingan], references: [id])
 
@@ -352,7 +352,7 @@ model Absensi{
   createdBy       String?
   updatedBy       String?
   createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  updatedAt       DateTime       @default(now())
 
   kelompok_bimbingan   KelompokBimbingan @relation(fields: [id_bimbingan], references: [id])
 

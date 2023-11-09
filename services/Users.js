@@ -26,7 +26,45 @@ async function registerAdminSekolah(data) {
     }
 }
 
+async function findUser(where){
+    try {
+        var dataUser = await user.findFirst({
+            where
+        })
+
+        if (dataUser != null) {
+            return {success: true, data: dataUser}
+        }else{
+            return {success: false, data: []}
+        }
+        
+    } catch (error) {
+        console.log(error)
+        return {success: false, data: []}
+    }
+}
+
+async function updateRefreshToken(id, token){
+    try {
+        var updated = await user.update({
+            where : {
+                id
+            },
+            data : {
+                refresh_token : token
+            }
+        })
+
+        return {success: true, data: updated}
+    } catch (error) {
+        console.log(error)
+        return {success: false}
+    }
+}
+
 module.exports = {
     createUser,
-    registerAdminSekolah
+    registerAdminSekolah,
+    findUser,
+    updateRefreshToken
 }

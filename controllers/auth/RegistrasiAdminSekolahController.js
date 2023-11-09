@@ -30,17 +30,14 @@ async function handler(req, res) {
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(password, salt)
 
-    var newAdminSekolah = await userService.registerAdminSekolah({
-        username,
-        nama,
-        alamat,
-        no_hp
+    var cekUsername = await userService.findUser({
+        username
     })
 
-    if (!newAdminSekolah.success) {
+    if(cekUsername.success){
         result.success = false
-        result.message = "Internal Server Error"
-        res.status(500).json(result)
+        result.message = "Username sudah digunakan..."
+        return res.status(400).json(result)
     }
 
     var newUser = await userService.createUser({
@@ -49,7 +46,21 @@ async function handler(req, res) {
         role
     })
 
-    if (newUser) {
+    if (!newUser.success) {
+        result.success = false
+        result.message = "Internal Server Error"
+        return res.status(500).json(result)
+    }
+
+    var newAdminSekolah = await userService.registerAdminSekolah({
+        username,
+        nama,
+        alamat,
+        no_hp
+    })
+
+    if (newAdminSekolah.success) {
+        result.message = "Registrasi berhasil..."
         result.data = newAdminSekolah.data
         res.json(result)
     } else {
