@@ -23,6 +23,8 @@ app.use("/tes", require("./routes/Tes"))
 app.use("/tahun-ajaran", require("./routes/TahunAjaran"))
 app.use("/jurusan", require("./routes/Jurusan"))
 app.use("/guru-pembimbing", require("./routes/GuruPembimbing"))
+app.use("/siswa", require("./routes/Siswa"))
+app.use("/perusahaan", require("./routes/Perusahaan"))
 
 
 app.listen(process.env.APP_PORT, () => {
