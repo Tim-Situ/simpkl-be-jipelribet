@@ -1,8 +1,10 @@
-function checkUserRole(role) {
+function checkUserRole(allowedRole) {
     
     return (req, res, next) => {
-        // Simulasikan peran pengguna dari objek pengguna (pastikan req.role sesuai dengan objek pengguna Anda)
-        if (req.role === role) {
+        
+        var userRole = req.role
+
+        if (allowedRole.includes(userRole)) {
           // Pengguna memiliki peran yang diperlukan, lanjutkan
             next();
         } else {
