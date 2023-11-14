@@ -29,6 +29,7 @@ app.use("/guru-pembimbing", require("./routes/GuruPembimbing"))
 app.use("/siswa", require("./routes/Siswa"))
 app.use("/perusahaan", require("./routes/Perusahaan"))
 app.use("/instruktur", require("./routes/Instruktur"))
+app.use("/kelompok-bimbingan", require("./routes/KelompokBimbingan"))
 
 
 app.listen(process.env.APP_PORT, () => {
