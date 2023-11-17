@@ -29,7 +29,7 @@ async function findOne(where){
         })
         return {success: true, data: data}
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         return {success: false, data: []}
     }
 }
