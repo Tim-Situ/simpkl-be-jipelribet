@@ -30,7 +30,7 @@ async function handler(req, res) {
 
     if (newTujuanPembelajaran.success) {
         result.message = "Tujuan Pembelajaran berhasil ditambahkan..."
-        result.data = tujuanPembelajaranService.data
+        result.data = newTujuanPembelajaran.data
         res.status(201).json(result)
     } else {
         result.success = false

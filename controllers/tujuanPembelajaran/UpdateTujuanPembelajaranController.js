@@ -28,7 +28,7 @@ async function handler(req, res) {
     })
 
     if (!dataTujuanPembelajaran.success) {
-        result.success = fals
+        result.success = false
         result.message = "Data tujuan pembelajaran tidak ditemukan..."
         return res.status(404).json(result)
     }
