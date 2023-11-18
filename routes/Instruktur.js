@@ -7,7 +7,7 @@ var createInstrukturController = require("../controllers/instruktur/CreateInstru
 var getAllInstrukturController = require("../controllers/instruktur/GetAllInstrukturController")
 var updateInstrukturController = require("../controllers/instruktur/UpdateInstrukturController")
 
-router.post("/create", verifyToken, checkUserRole(PERUSAHAAN), createInstrukturController)
+router.post("/create", verifyToken, checkUserRole([PERUSAHAAN, ADMINSEKOLAH]), createInstrukturController)
 router.get("/all", verifyToken, checkUserRole([PERUSAHAAN, ADMINSEKOLAH]), getAllInstrukturController)
 router.put("/update", verifyToken, checkUserRole([PERUSAHAAN, ADMINSEKOLAH]), updateInstrukturController)
 

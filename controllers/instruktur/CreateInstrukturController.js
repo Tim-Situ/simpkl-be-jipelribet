@@ -2,10 +2,12 @@ var Joi = require("joi")
 var bcrypt = require("bcrypt")
 const randomatic = require('randomatic');
 
+var {INSTRUKTUR, PERUSAHAAN} = require("../../utils/constants")
+var randomPassword = require("../../middleware/GenerateRandomPassword")
 var userService = require("../../services/Users")
 var instrukturService = require("../../services/Instruktur")
 var perusahaanService = require("../../services/Perusahaan")
-var {INSTRUKTUR} = require("../../utils/constants")
+
 const BaseResponse = require("../../dto/BaseResponse")
 
 async function handler(req, res) {
@@ -14,7 +16,8 @@ async function handler(req, res) {
     var schema = Joi.object({
         username : Joi.string().max(100).required(),
         nama : Joi.string().max(100).required(),
-        no_hp : Joi.string().max(25).required()
+        no_hp : Joi.string().max(25).required(),
+        id_perusahaan: Joi.string().allow(null, '') // Jika yg input adalah ADMINSEKOLAH
     })
 
     var { error, value } = schema.validate(req.body)
@@ -26,13 +29,21 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    var { username, nama, no_hp } = value
+    var { username, nama, no_hp, id_perusahaan } = value
     var role = INSTRUKTUR
+    var where
 
-    const password = randomatic('Aa0!', 8);
+    // const password = randomatic('Aa0!', 8);
+    const password = randomPassword.generateRandomPassword(8)
 
+    if (!password.success) {
+        result.success = false
+        result.message = "Internal Server Error"
+        return res.status(500).json(result)
+    }
+    
     const salt = await bcrypt.genSalt();
-    const hashPassword = await bcrypt.hash(password, salt)
+    const hashPassword = await bcrypt.hash(password.data, salt)
 
     var cekUsername = await userService.findUser({
         username
@@ -44,11 +55,23 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    var perusahaan = await perusahaanService.findOne({
-        username: req.username
-    })
+    if(req.role == PERUSAHAAN){
+        where = {
+            username: req.username
+        }
+    }else{
+        if (!id_perusahaan) {
+            result.success = false
+            result.message = "id_perusahaan tidak boleh kosong..."
+            return res.status(400).json(result)
+        }
+        
+        where = {
+            id: id_perusahaan
+        }
+    }
 
-    console.log(req.username)
+    var perusahaan = await perusahaanService.findOne(where)
 
     if(!perusahaan.success){
         result.success = false
@@ -59,7 +82,7 @@ async function handler(req, res) {
     var newUser = await userService.createUser({
         username,
         password : hashPassword,
-        temp_password : password,
+        temp_password : password.data,
         role,
         createdBy : req.username
     })
@@ -81,7 +104,7 @@ async function handler(req, res) {
     if (newInstruktur.success) {
         result.message = "Data instruktur berhasil ditambahkan..."
         result.data = newInstruktur.data
-        res.json(result)
+        res.status(201).json(result)
     } else {
         result.success = false
         result.message = "Internal Server Error"

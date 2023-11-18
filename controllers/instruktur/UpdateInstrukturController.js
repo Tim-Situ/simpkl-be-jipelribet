@@ -1,7 +1,10 @@
 var Joi = require("joi")
+const BaseResponse = require("../../dto/BaseResponse")
+const {PERUSAHAAN} = require("../../utils/constants")
 var userService = require("../../services/Users")
 var instrukturService = require("../../services/Instruktur")
-const BaseResponse = require("../../dto/BaseResponse")
+var perusahaanService = require("../../services/Perusahaan")
+
 
 async function handler(req, res) {
     var result = new BaseResponse()
@@ -33,6 +36,24 @@ async function handler(req, res) {
         result.success = false
         result.message = "Data instruktur tidak ditemukan..."
         return res.status(404).json(result)
+    }
+
+    if (req.role == PERUSAHAAN) {
+        var dataPerusahaan = await perusahaanService.findOne({
+            username : req.username
+        })
+    
+        if (!dataPerusahaan.success) {
+            result.success = false
+            result.message = "Internal Server Error..."
+            return res.status(500).json(result)
+        }
+
+        if (dataPerusahaan.data.id != dataInstruktur.data.id_perusahaan) {
+            result.success = false
+            result.message = "Anda tidak memiliki akses untuk mengubah data instruktur ini..."
+            return res.status(403).json(result)
+        }
     }
 
     if(username != null){
