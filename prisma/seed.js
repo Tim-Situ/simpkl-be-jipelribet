@@ -1,17 +1,20 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-
-const tujuanPembelajaranData = [
-    { judul: 'asdsad sad s', deskripsi: 'asdsad asd a', createdBy: 'asdjasmjd sa', updatedBy: 'lashdsaskdaj as' },
-];
+var bcrypt = require("bcrypt");
 
 async function seed() {
-    for (const data of tujuanPembelajaranData) {
-      await prisma.tujuanPembelajaran.create({
-        data: data,
-      });
+  const salt = await bcrypt.genSalt()
+  const hashPassword = await bcrypt.hash('pass@123', salt)
+
+  var newUserData = await prisma.user.create({
+    data : {
+      username: 'ini_pembimbing',
+      password: hashPassword,
+      role: 'PEMBIMBING',
     }
+  })
 }
+
 
 seed()
   .catch((error) => {
