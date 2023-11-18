@@ -31,6 +31,7 @@ app.use("/perusahaan", require("./routes/Perusahaan"))
 app.use("/instruktur", require("./routes/Instruktur"))
 app.use("/kelompok-bimbingan", require("./routes/KelompokBimbingan"))
 app.use("/tujuan-pembelajaran", require("./routes/TujuanPembelajaran"))
+app.use("/nilai-bulanan", require("./routes/NilaiBulanan"))
 
 app.listen(process.env.APP_PORT, () => {
     console.log("Server up and running...")

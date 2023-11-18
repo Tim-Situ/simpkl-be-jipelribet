@@ -27,10 +27,10 @@ async function findOne(where){
         var data = await tujuanPembelajaran.findFirstOrThrow({
             where
         })
+
         return {success: true, data: data}
     } catch (error) {
-        // console.log(error)
-        return {success: false, data: []}
+        return {success: false, data: error}
     }
 }
 
