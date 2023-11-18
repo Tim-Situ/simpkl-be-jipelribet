@@ -27,6 +27,13 @@ enum EnumAbsensi {
   IZIN    @map("Izin")
 }
 
+enum EnumStatusPerusahaan {
+  AKTIF      @map("Aktif")
+  NONAKTIF   @map("Non Aktif")
+  PENDING    @map("Pending")
+  REJECT    @map("Reject")
+}
+
 model User{
   id            String    @id @default(uuid())
   username      String    @db.VarChar(50) @unique
@@ -142,6 +149,7 @@ model Perusahaan{
   no_hp             String    @db.VarChar(25)
   email             String?
   website           String?
+  status            EnumStatusPerusahaan @default(PENDING)
 
   createdBy         String?
   updatedBy         String?

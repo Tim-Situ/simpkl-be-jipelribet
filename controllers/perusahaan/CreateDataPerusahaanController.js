@@ -1,22 +1,24 @@
 var Joi = require("joi")
 var bcrypt = require("bcrypt")
 
-var {INSTRUKTUR, PERUSAHAAN} = require("../../utils/constants")
-var randomPassword = require("../../middleware/GenerateRandomPassword")
-var userService = require("../../services/Users")
-var instrukturService = require("../../services/Instruktur")
-var perusahaanService = require("../../services/Perusahaan")
-
 const BaseResponse = require("../../dto/BaseResponse")
+var dataCons = require("../../utils/constants")
+var randomPassword = require("../../middleware/GenerateRandomPassword")
+
+var userService = require("../../services/Users")
+var perusahaanService = require("../../services/Perusahaan")
 
 async function handler(req, res) {
     var result = new BaseResponse()
 
     var schema = Joi.object({
-        username : Joi.string().max(100).required(),
-        nama : Joi.string().max(100).required(),
+        username : Joi.string().max(20).required(),
+        nama_perusahaan : Joi.string().max(100).required(),
+        pimpinan : Joi.string().max(100).required(),
+        alamat : Joi.string().required(),
         no_hp : Joi.string().max(25).required(),
-        id_perusahaan: Joi.string().allow(null, '') // Jika yg input adalah ADMINSEKOLAH
+        email : Joi.string().allow(null, ''),
+        website : Joi.string().allow(null, '')
     })
 
     var { error, value } = schema.validate(req.body)
@@ -28,19 +30,16 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    var { username, nama, no_hp, id_perusahaan } = value
-    var role = INSTRUKTUR
-    var where
+    var { username, nama_perusahaan, pimpinan, alamat, no_hp, email, website } = value
+    var role = dataCons.PERUSAHAAN
 
-    // const password = randomatic('Aa0!', 8);
     const password = randomPassword.generateRandomPassword(8)
-
     if (!password.success) {
         result.success = false
         result.message = "Internal Server Error"
         return res.status(500).json(result)
     }
-    
+
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(password.data, salt)
 
@@ -51,30 +50,6 @@ async function handler(req, res) {
     if(cekUsername.success){
         result.success = false
         result.message = "Username sudah digunakan..."
-        return res.status(400).json(result)
-    }
-
-    if(req.role == PERUSAHAAN){
-        where = {
-            username: req.username
-        }
-    }else{
-        if (!id_perusahaan) {
-            result.success = false
-            result.message = "id_perusahaan tidak boleh kosong..."
-            return res.status(400).json(result)
-        }
-        
-        where = {
-            id: id_perusahaan
-        }
-    }
-
-    var perusahaan = await perusahaanService.findOne(where)
-
-    if(!perusahaan.success){
-        result.success = false
-        result.message = "Data perusahaan tidak ditemukan..."
         return res.status(400).json(result)
     }
 
@@ -92,18 +67,22 @@ async function handler(req, res) {
         return res.status(500).json(result)
     }
 
-    var newInstruktur = await instrukturService.createNew({
-        id_perusahaan: perusahaan.data.id,
+    var newPerusahaan = await perusahaanService.registrasi({
         username,
-        nama,
+        nama_perusahaan,
+        pimpinan,
+        alamat,
         no_hp,
+        email,
+        website,
+        status: dataCons.AKTIF,
         createdBy : req.username
     })
 
-    if (newInstruktur.success) {
-        result.message = "Data instruktur berhasil ditambahkan..."
-        result.data = newInstruktur.data
-        res.status(201).json(result)
+    if (newPerusahaan.success) {
+        result.message = "Perusahaan berhasil ditambahkan..."
+        result.data = newPerusahaan.data
+        res.json(result)
     } else {
         result.success = false
         result.message = "Internal Server Error"

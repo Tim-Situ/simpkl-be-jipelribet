@@ -26,8 +26,6 @@ function generateRandomPassword(min_length){
             } else if (!shuffleIndex.includes(3)) {
                 shuffleIndex.push(3)
             }
-
-            console.log("shuffleIndex : " + shuffleIndex)
         }
 
         // Menggenerate char sesuai dari shuffle index

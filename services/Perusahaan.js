@@ -34,7 +34,7 @@ async function getAll(){
 
 async function updateData(where, data){
     try {
-        var dataUpdated = await perusahaan.updateMany({
+        var dataUpdated = await perusahaan.update({
             where,
             data
         })
