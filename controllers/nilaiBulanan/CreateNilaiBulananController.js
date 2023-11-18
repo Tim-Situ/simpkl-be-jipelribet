@@ -11,7 +11,7 @@ async function handler(req, res) {
     var schema = Joi.object({
         id_bimbingan : Joi.string().required(),
         id_tujuan_pembelajaran : Joi.string().required(),
-        bulan : Joi.number().integer().min(0).max(12).required(),
+        bulan : Joi.number().integer().min(1).max(12).required(),
         tahun : Joi.number().integer().min(2000).max(9999).required(),
         nilai: Joi.number().integer().min(0).max(100).required(),
         deskripsi: Joi.string().required()
