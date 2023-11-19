@@ -4,6 +4,7 @@ var Joi = require("joi")
 var nilaiBulananService = require("../../services/NilaiBulanan")
 var kelompokBimbinganService = require("../../services/KelompokBimbingan")
 var tujuanPembelajaranService = require("../../services/TujuanPembelajaran")
+var guruPembimbingService = require("../../services/GuruPembimbing")
 
 async function handler(req, res) {
     var result = new BaseResponse()
@@ -27,6 +28,7 @@ async function handler(req, res) {
     }
 
     var { id_bimbingan, id_tujuan_pembelajaran, bulan, tahun, nilai, deskripsi } = value
+    var id_guru_pembimbing
 
     var cekKelompokBimbingan = await kelompokBimbinganService.findOne({
         id: id_bimbingan
@@ -46,6 +48,30 @@ async function handler(req, res) {
         result.success = false
         result.message = "Data tujuan pembelajaran tidak ditemukan..."
         return res.status(400).json(result)
+    }
+
+    // Revisi: pengecekan guru pembimbing di kelompok bimbingan
+    var cekGuruPembimbing = await guruPembimbingService.findOne({
+        nip: req.username
+    })
+
+    if (cekGuruPembimbing.success) {
+        id_guru_pembimbing = cekGuruPembimbing.data.id
+    } else {
+        result.success = false
+        result.message = "Terjadi kesalahan di sistem..."
+        return res.status(500).json(result)
+    }
+
+    var cekAksesGuruPembimbing = await kelompokBimbinganService.findOne({
+        id: id_bimbingan,
+        id_guru_pembimbing: id_guru_pembimbing
+    })
+
+    if (!cekAksesGuruPembimbing.success) {
+        result.success = false
+        result.message = "Anda tidak memiliki akses untuk menambahkan nilai kelompok bimbingan ini..."
+        return res.status(403).json(result)
     }
 
     var newNilaiBulanan = await nilaiBulananService.createNew({
