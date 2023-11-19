@@ -3,10 +3,10 @@ var { verifyToken } = require("../middleware/VerifyToken")
 var { checkUserRole } = require("../middleware/CekRoles")
 const { PEMBIMBING } = require("../utils/constants")
 
-// var getAllNilaiBulananController = require("../controllers/nilaiBulanan/GetAllNilaiBulananController")
+var updateNilaiBulananController = require("../controllers/nilaiBulanan/UpdateNilaiBulananController")
 var createNilaiBulananController = require("../controllers/nilaiBulanan/CreateNilaiBulananController")
 
-// router.get("/all", verifyToken, checkUserRole(PEMBIMBING), getAllNilaiBulananController)
 router.post("/create", verifyToken, checkUserRole(PEMBIMBING), createNilaiBulananController)
+router.put("/update", verifyToken, checkUserRole(PEMBIMBING), updateNilaiBulananController)
 
 module.exports = router
