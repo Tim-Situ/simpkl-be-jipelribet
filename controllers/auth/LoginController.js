@@ -10,7 +10,7 @@ async function handler(req, res) {
 
     var schema = Joi.object({
         username : Joi.string().max(50).required(),
-        password : Joi.string().max(10).required()
+        password : Joi.string().min(8).required()
     })
 
     var { error, value } = schema.validate(req.body)

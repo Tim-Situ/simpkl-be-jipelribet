@@ -67,7 +67,7 @@ async function updateUser(where, data){
         return {success: true, data: updated}
     } catch (error) {
         console.log(error)
-        return {success: false}
+        return {success: false, data: null}
     }
 }
 

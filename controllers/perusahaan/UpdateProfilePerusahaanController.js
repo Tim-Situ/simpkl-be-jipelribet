@@ -27,7 +27,7 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    var { username, password, nama_perusahaan, pimpinan, alamat, no_hp, email, website } = value
+    var { username, nama_perusahaan, pimpinan, alamat, no_hp, email, website } = value
 
     var dataPerusahaan = await perusahaanService.findOne({
         username: req.username
