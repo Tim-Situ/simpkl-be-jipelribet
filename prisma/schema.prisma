@@ -27,6 +27,13 @@ enum EnumAbsensi {
   IZIN    @map("Izin")
 }
 
+enum EnumStatusPerusahaan {
+  AKTIF      @map("Aktif")
+  NONAKTIF   @map("Non Aktif")
+  PENDING    @map("Pending")
+  REJECT    @map("Reject")
+}
+
 model User{
   id            String    @id @default(uuid())
   username      String    @db.VarChar(50) @unique
@@ -142,6 +149,7 @@ model Perusahaan{
   no_hp             String    @db.VarChar(25)
   email             String?
   website           String?
+  status            EnumStatusPerusahaan @default(PENDING)
 
   createdBy         String?
   updatedBy         String?
@@ -176,7 +184,7 @@ model KelompokBimbingan{
   id                  String    @id @default(uuid())
   id_siswa            String    
   id_guru_pembimbing  String    
-  id_instruktur       String    
+  id_instruktur       String?    
   id_perusahaan       String    
   id_tahun_ajaran     String    
   status              Boolean   @default(true)
@@ -188,7 +196,7 @@ model KelompokBimbingan{
 
   siswa           Siswa @relation(fields: [id_siswa], references: [id])
   guru_pembimbing GuruPembimbing @relation(fields: [id_guru_pembimbing], references: [id])
-  instruktur      Instruktur @relation(fields: [id_instruktur], references: [id])
+  instruktur      Instruktur? @relation(fields: [id_instruktur], references: [id])
   perusahaan      Perusahaan @relation(fields: [id_perusahaan], references: [id])
   tahun_ajaran    TahunAjaran @relation(fields: [id_tahun_ajaran], references: [id])
 

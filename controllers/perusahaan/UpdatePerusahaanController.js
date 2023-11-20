@@ -1,21 +1,23 @@
 var Joi = require("joi")
-var bcrypt = require("bcrypt")
+const BaseResponse = require("../../dto/BaseResponse")
+const {AKTIF, NONAKTIF, REJECT} = require("../../utils/constants")
+
 var userService = require("../../services/Users")
 var perusahaanService = require("../../services/Perusahaan")
-const BaseResponse = require("../../dto/BaseResponse")
 
 async function handler(req, res) {
     var result = new BaseResponse()
 
     var schema = Joi.object({
+        id: Joi.string().required(),
         username : Joi.string().max(20).allow(null, ''),
-        //password : Joi.string().max(10).allow(null, ''),
         nama_perusahaan : Joi.string().max(100).allow(null, ''),
         pimpinan : Joi.string().max(100).allow(null, ''),
         alamat : Joi.string().allow(null, ''),
         no_hp : Joi.string().max(25).allow(null, ''),
         email : Joi.string().allow(null, ''),
-        website : Joi.string().allow(null, '')
+        website : Joi.string().allow(null, ''),
+        status : Joi.string().valid(AKTIF, NONAKTIF, REJECT).allow(null, ''),
     })
 
     var { error, value } = schema.validate(req.body)
@@ -27,10 +29,10 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    var { username, nama_perusahaan, pimpinan, alamat, no_hp, email, website } = value
+    var { id, username, nama_perusahaan, pimpinan, alamat, no_hp, email, website, status } = value
 
     var dataPerusahaan = await perusahaanService.findOne({
-        username: req.username
+        id
     })
 
     if (!dataPerusahaan.success) {
@@ -44,7 +46,7 @@ async function handler(req, res) {
             username
         })
 
-        if(cekUsername.success && cekUsername.data.username != req.username){
+        if(cekUsername.success && cekUsername.data.username != dataPerusahaan.data.username){
             result.success = false
             result.message = "Username sudah digunakan..."
             return res.status(400).json(result)
@@ -52,10 +54,10 @@ async function handler(req, res) {
     }
 
     var updateUser = await userService.updateUser(
-        { username : req.username},
+        { username : dataPerusahaan.data.username},
         {
             username,
-            updatedBy : username
+            updatedBy : req.username
         }
     )
 
@@ -66,7 +68,7 @@ async function handler(req, res) {
     }
     
     var updatePerusahaan = await perusahaanService.updateData(
-        {username : req.username},
+        {id},
         {
             username,
             nama_perusahaan,
@@ -74,12 +76,15 @@ async function handler(req, res) {
             alamat,
             no_hp,
             email,
-            website
+            website,
+            status,
+            updatedBy : req.username
         }
     )
 
     if (updatePerusahaan.success) {
-        result.message = "Data Profile berhasil diubah..."
+        result.message = "Data perusahaan berhasil diubah..."
+        result.data = updatePerusahaan.data
         res.status(200).json(result)
     } else {
         result.success = false

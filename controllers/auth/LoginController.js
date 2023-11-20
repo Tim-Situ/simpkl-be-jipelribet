@@ -10,7 +10,7 @@ async function handler(req, res) {
 
     var schema = Joi.object({
         username : Joi.string().max(50).required(),
-        password : Joi.string().max(10).required()
+        password : Joi.string().min(8).required()
     })
 
     var { error, value } = schema.validate(req.body)
@@ -62,7 +62,7 @@ async function handler(req, res) {
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000,
-            secure: true,
+            // secure: true,
             // domain: 'http://localhost:3000/',
             sameSite: "none"
         })

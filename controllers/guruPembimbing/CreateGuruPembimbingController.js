@@ -3,8 +3,6 @@ var bcrypt = require("bcrypt")
 // var cryptoRandomString = require('crypto-random-string');
 const randomatic = require('randomatic');
 
-const randomstring = require('randomstring');
-
 var userService = require("../../services/Users")
 var guruPembimbingService = require("../../services/GuruPembimbing")
 const BaseResponse = require("../../dto/BaseResponse")

@@ -67,7 +67,23 @@ async function updateUser(where, data){
         return {success: true, data: updated}
     } catch (error) {
         console.log(error)
-        return {success: false}
+        return {success: false, data: null}
+    }
+}
+
+async function getProfile(where, select){
+    try {
+        var profile = await user.findFirstOrThrow({
+            where,
+            select
+        })
+
+        delete profile["password"]
+
+        return {success: true, data: profile}
+    } catch (error) {
+        console.log(error)
+        return {success: false, data: []}
     }
 }
 
@@ -76,5 +92,6 @@ module.exports = {
     registerAdminSekolah,
     findUser,
     updateRefreshToken,
-    updateUser
+    updateUser,
+    getProfile
 }
