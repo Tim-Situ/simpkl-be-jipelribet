@@ -62,7 +62,7 @@ async function handler(req, res) {
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000,
-            secure: true,
+            // secure: true,
             // domain: 'http://localhost:3000/',
             sameSite: "none"
         })
