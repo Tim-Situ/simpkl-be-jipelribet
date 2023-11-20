@@ -1,13 +1,14 @@
 var Joi = require("joi")
 var bcrypt = require("bcrypt")
 const BaseResponse = require("../../dto/BaseResponse")
+const cekPassword = require("../../dto/CekPasswordValid")
 var userService = require("../../services/Users")
 
 async function handler(req, res) {
     var result = new BaseResponse()
 
     var schema = Joi.object({
-        old_password : Joi.string().min(8).required(),
+        old_password : Joi.string().required(),
         new_password : Joi.string().min(8).required(),
     })
 
@@ -21,6 +22,14 @@ async function handler(req, res) {
     }
 
     var { old_password, new_password } = value
+
+    const cekPasswordValid = cekPassword.cekPasswordValid(new_password)
+
+    if (!cekPasswordValid.success) {
+        result.success = false
+        result.message = "Password harus terdiri minimal 1 huruf kecil, 1 huruf besar, 1 angka dan 1 karakter spesial"
+        return res.status(400).json(result) 
+    }
 
     var dataUser = await userService.findUser({
         username : req.username
