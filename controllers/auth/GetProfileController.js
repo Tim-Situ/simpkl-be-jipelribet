@@ -111,10 +111,28 @@ async function handler(req, res) {
     }
 
     var profileUser = await userService.getProfile(where, select)
+    var data = {}
 
     if (profileUser.success) {
+        data.username = profileUser.data.username
+        data.role = profileUser.data.role
+        
+        if (profileUser.data.role == ADMINSEKOLAH) {
+            data.dataPengguna = profileUser.data.dataAdminSekolah
+        } else if (profileUser.data.role == PEMBIMBING) {
+            data.dataPengguna = profileUser.data.dataGuruPembimbing
+        } else if (profileUser.data.role == SISWA) {
+            data.dataPengguna = profileUser.data.dataSiswa
+        } else if (profileUser.data.role == INSTRUKTUR) {
+            data.dataPengguna = profileUser.data.dataInstruktur
+        } else if (profileUser.data.role == PERUSAHAAN) {
+            data.dataPengguna = profileUser.data.dataPerusahaan
+        }
+
+        data.dataPengguna = data.dataPengguna[0]
+
         result.message = "Data profile berhasil ditampilkan..."
-        result.data = profileUser.data
+        result.data = data
         res.status(200).json(result)
     } else {
         result.success = false

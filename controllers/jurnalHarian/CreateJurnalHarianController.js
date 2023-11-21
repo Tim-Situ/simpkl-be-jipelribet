@@ -1,7 +1,7 @@
 var Joi = require("joi")
 
 const BaseResponse = require("../../dto/BaseResponse")
-var uploadFile = require("../../dto/UploadFile")
+var uploadFile = require("../../dto/ManageFile")
 var jurnalHarianService = require("../../services/JurnalHarian")
 var kelompokBimbinganService = require("../../services/KelompokBimbingan")
 var siswaService = require("../../services/Siswa")
