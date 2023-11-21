@@ -8,6 +8,23 @@ const s3 = new AWS.S3({
     },
 });
 
+async function deleteImageFromS3(username, fileName) {
+    return new Promise((resolve, reject) => {
+        const params = {
+            Bucket: `tplum/jurnalHarian/${username}`,
+            Key: fileName,
+        };
+
+        s3.deleteObject(params, (s3Err, data) => {
+            if (s3Err) {
+                reject(s3Err);
+            } else {
+                resolve("Foto Berhasil Dihapus...");
+            }
+        })
+    });
+}
+
 async function uploadImageToS3(file, username) {
     return new Promise((resolve, reject) => {
         const params = {
@@ -29,4 +46,7 @@ async function uploadImageToS3(file, username) {
     });
 }
 
-module.exports = { uploadImageToS3 };
+module.exports = { 
+    uploadImageToS3,
+    deleteImageFromS3
+};
