@@ -1,37 +1,30 @@
-const BaseResponse = require("../../dto/BaseResponse")
+const BaseResponse = require('../../dto/BaseResponse')
 
-var nilaiBulananService = require("../../services/NilaiBulanan")
-var siswaService = require("../../services/Siswa")
-var kelompokBimbinganService = require("../../services/KelompokBimbingan")
+var nilaiBulananService = require('../../services/NilaiBulanan')
+var siswaService = require('../../services/Siswa')
+var kelompokBimbinganService = require('../../services/KelompokBimbingan')
 
 async function handler(req, res) {
     var result = new BaseResponse()
-    
-    if ( !req.query.siswa || !req.query.bulan || !req.query.tahun ) {
+
+    if ( !req.query.bulan || !req.query.tahun ) {
         result.success = false
-        result.message = "Parameter siswa, bulan dan tahun harus diisi..."
+        result.message = "Parameter bulan dan tahun harus diisi..."
         return res.status(400).json(result)
     }
     
-    var id_siswa = req.query.siswa
     var bulan = parseInt(req.query.bulan)
     var tahun = parseInt(req.query.tahun)
 
     var cekSiswa = await siswaService.findOne({
-        id: id_siswa
+        nisn: req.username
     })
 
-    if (!cekSiswa.success) {
-        result.success = false
-        result.message = "Parameter id siswa tidak ditemukan..."
-        return res.status(404).json(result)
-    }
-
-    var cekKelompokBimbingan = await kelompokBimbinganService.getAll(
-        where = { id_siswa: id_siswa},
-        select = { id: true },
-        orderBy = { status: 'desc' }
-    )
+    var id_siswa = cekSiswa.data.id
+    
+    var cekKelompokBimbingan = await kelompokBimbinganService.findOne({
+        id_siswa
+    })
 
     if (cekKelompokBimbingan.data.length > 1) {
         var where = {

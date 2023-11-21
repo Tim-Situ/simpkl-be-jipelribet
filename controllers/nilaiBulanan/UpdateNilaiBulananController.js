@@ -3,7 +3,6 @@ var Joi = require("joi")
 
 var nilaiBulananService = require("../../services/NilaiBulanan")
 var kelompokBimbinganService = require("../../services/KelompokBimbingan")
-var tujuanPembelajaranService = require("../../services/TujuanPembelajaran")
 var guruPembimbingService = require("../../services/GuruPembimbing")
 
 async function handler(req, res) {
@@ -25,7 +24,6 @@ async function handler(req, res) {
     }
 
     var { id, nilai, deskripsi } = value
-    var id_guru_pembimbing
 
     var cekNilaiBulanan = await nilaiBulananService.findOne({
         id
