@@ -63,7 +63,7 @@ async function handler(req, res) {
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000,
             // secure: true,
-            // domain: 'http://localhost:3000/',
+            domain: 'http://localhost:3000/',
             sameSite: "none"
         })
         result.message = "Login berhasil..."
