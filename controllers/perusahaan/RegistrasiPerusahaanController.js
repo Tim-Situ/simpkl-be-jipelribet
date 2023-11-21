@@ -1,17 +1,19 @@
 var Joi = require("joi")
 var bcrypt = require("bcrypt")
+
+const BaseResponse = require("../../dto/BaseResponse")
 var dataCons = require("../../utils/constants")
+const cekPassword = require("../../dto/CekPasswordValid")
 
 var userService = require("../../services/Users")
 var perusahaanService = require("../../services/Perusahaan")
-const BaseResponse = require("../../dto/BaseResponse")
 
 async function handler(req, res) {
     var result = new BaseResponse()
 
     var schema = Joi.object({
-        username : Joi.string().max(20).required(),
-        password : Joi.string().max(10).required(),
+        username : Joi.string().min(5).max(20).required(),
+        password : Joi.string().min(8).required(),
         nama_perusahaan : Joi.string().max(100).required(),
         pimpinan : Joi.string().max(100).required(),
         alamat : Joi.string().required(),
@@ -31,6 +33,13 @@ async function handler(req, res) {
 
     var { username, password, nama_perusahaan, pimpinan, alamat, no_hp, email, website } = value
     var role = dataCons.PERUSAHAAN
+
+    const cekPasswordValid = cekPassword.cekPasswordValid(password)
+    if (!cekPasswordValid.success) {
+        result.success = false
+        result.message = "Password harus terdiri minimal 1 huruf kecil, 1 huruf besar, 1 angka dan 1 karakter spesial"
+        return res.status(400).json(result) 
+    }
 
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(password, salt)

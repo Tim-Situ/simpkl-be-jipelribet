@@ -9,8 +9,8 @@ async function handler(req, res) {
     var result = new BaseResponse()
 
     var schema = Joi.object({
-        username : Joi.string().max(50).required(),
-        password : Joi.string().min(8).required()
+        username : Joi.string().required(),
+        password : Joi.string().required()
     })
 
     var { error, value } = schema.validate(req.body)
@@ -30,14 +30,14 @@ async function handler(req, res) {
 
     if(dataUser.success && dataUser.data == null){
         result.success = false
-        result.message = "Username tidak ditemukan..."
+        result.message = "wrong email or password"
         return res.status(404).json(result)
     }
 
     const match = await bcrypt.compare(password, dataUser.data.password)
     if(!match){
         result.success = false
-        result.message = "Password salah..."
+        result.message = "wrong email or password"
         return res.status(400).json(result)
     }
 

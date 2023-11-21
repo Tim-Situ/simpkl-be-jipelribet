@@ -1,11 +1,12 @@
 var Joi = require("joi")
 var bcrypt = require("bcrypt")
-const randomatic = require('randomatic');
+
+const BaseResponse = require("../../dto/BaseResponse")
+var randomPassword = require("../../middleware/GenerateRandomPassword")
 
 var userService = require("../../services/Users")
 var siswaService = require("../../services/Siswa")
 var jurusanService = require("../../services/Jurusan")
-const BaseResponse = require("../../dto/BaseResponse")
 
 async function handler(req, res) {
     var result = new BaseResponse()
@@ -36,7 +37,13 @@ async function handler(req, res) {
     // console.log(tanggal_lahir)
     // tanggal_lahir = format(new Date(tanggal_lahir), 'yyyy-MM-dd');
 
-    const password = randomatic('Aa0!', 8);
+    const password = randomPassword.generateRandomPassword(8)
+
+    if (!password.success) {
+        result.success = false
+        result.message = "Internal Server Error"
+        return res.status(500).json(result)
+    }
 
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(password, salt)
