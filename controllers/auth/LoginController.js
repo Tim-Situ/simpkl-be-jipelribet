@@ -28,7 +28,7 @@ async function handler(req, res) {
         username
     })
 
-    if(dataUser.success && dataUser.data == null){
+    if(!dataUser.success){
         result.success = false
         result.message = "wrong email or password"
         return res.status(404).json(result)
