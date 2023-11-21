@@ -129,6 +129,8 @@ async function handler(req, res) {
             data.dataPengguna = profileUser.data.dataPerusahaan
         }
 
+        data.dataPengguna = data.dataPengguna[0]
+
         result.message = "Data profile berhasil ditampilkan..."
         result.data = data
         res.status(200).json(result)
