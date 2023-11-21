@@ -6,7 +6,7 @@ var uploadFile = require("../../dto/ManageFile")
 async function handler(req, res) {
     var result = new BaseResponse()
 
-    const url = "https://tplum.is3.cloudhost.id/jurnalHarian/565345650/1700551257.png"
+    const url = "https://tplum.is3.cloudhost.id/jurnalHarian/565345650/1700555039.png"
 
     const lastSlashIndex = url.lastIndexOf('/');
     const fileName2 = url.substring(lastSlashIndex + 1);
