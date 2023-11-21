@@ -55,6 +55,20 @@ async function findOne(where){
     
 }
 
+async function search(where){
+    try {
+        var data = await kelompokBimbingan.findMany({
+            where
+        })
+
+        return {success: true, data: data}
+    } catch (error) {
+        // console.log(error)
+        return {success: false, data: []}
+    }
+    
+}
+
 async function updateData(where, data){
     try {
         var dataUpdated = await kelompokBimbingan.update({
@@ -73,5 +87,6 @@ module.exports = {
     createNew,
     getAll,
     findOne,
-    updateData
+    updateData,
+    search
 }

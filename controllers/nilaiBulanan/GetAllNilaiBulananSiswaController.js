@@ -22,7 +22,7 @@ async function handler(req, res) {
 
     var id_siswa = cekSiswa.data.id
     
-    var cekKelompokBimbingan = await kelompokBimbinganService.findOne({
+    var cekKelompokBimbingan = await kelompokBimbinganService.search({
         id_siswa
     })
 
@@ -50,10 +50,7 @@ async function handler(req, res) {
         }
     }
 
-    var orderBy = [
-        { bulan: 'desc' },
-        { tahun: 'desc' }
-    ]
+    var orderBy = { id_tujuan_pembelajaran : 'asc' }
 
     var nilaiBulanan = await nilaiBulananService.getAll(
         where,
@@ -63,7 +60,7 @@ async function handler(req, res) {
     if (nilaiBulanan.success && nilaiBulanan.data.length === 0) {
         result.message = "Data nilai bulanan tidak ditemukan..."
         result.data = nilaiBulanan.data
-        return res.status(401).json(result)
+        return res.status(404).json(result)
     }
     
     if (nilaiBulanan.success && nilaiBulanan.data.length > 0) {
