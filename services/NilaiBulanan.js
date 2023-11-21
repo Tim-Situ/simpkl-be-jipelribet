@@ -12,9 +12,12 @@ async function createNew(data){
     }
 }
 
-async function getAll(){
+async function getAll(where, orderBy){
     try {
-        var allData = await nilaiBulanan.findMany()
+        var allData = await nilaiBulanan.findMany({
+            where,
+            orderBy
+        })
         return {success: true, data: allData}
     } catch (error) {
         console.log(error)
