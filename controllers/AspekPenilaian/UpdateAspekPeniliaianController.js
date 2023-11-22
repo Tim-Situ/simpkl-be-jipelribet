@@ -9,7 +9,7 @@ async function handler(req, res) {
     var schema = Joi.object({
         id: Joi.string().required(),
         judul : Joi.string().allow(null, ''),
-        kode : Joi.string().uppercase().length(1).allow(null, ''),
+        kode : Joi.string().uppercase().length(1).allow(null),
     })
 
     var { error, value } = schema.validate(req.body)
@@ -45,7 +45,7 @@ async function handler(req, res) {
     if (updatedAspekPenilaian.success) {
         result.message = "Data aspek penilaian berhasil diubah..."
         result.data = updatedAspekPenilaian.data
-        res.status(201).json(result)
+        res.status(200).json(result)
     } else {
         result.success = false
         result.message = "Internal Server Error"
