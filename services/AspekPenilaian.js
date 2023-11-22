@@ -12,6 +12,35 @@ async function createNew(data){
     }
 }
 
+async function findOne(where){
+    try {
+        var data = await aspekPenilaian.findFirstOrThrow({
+            where
+        })
+
+        return {success: true, data: data}
+    } catch (error) {
+        return {success: false, data: error}
+    }
+}
+
+async function updateData(id, data){
+    try {
+        var dataUpdated = await aspekPenilaian.update({
+            where: {
+                id
+            },
+            data
+        })
+        return {success: true, data: dataUpdated}
+    } catch (error) {
+        console.log(error)
+        return {success: false, data: []}
+    }
+}
+
 module.exports = {
-    createNew
+    createNew,
+    findOne,
+    updateData,
 }
