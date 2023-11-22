@@ -228,7 +228,7 @@ model NilaiAkhir{
 
 model AspekPenilaian{
   id                  String    @id @default(uuid())
-  id_kategori_nilai   String    
+  // id_kategori_nilai   String    
   judul               String    @db.VarChar(100)
   kode                String    @db.Char(1)
 
