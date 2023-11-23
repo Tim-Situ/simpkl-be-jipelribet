@@ -6,10 +6,12 @@ var { verifyToken } = require("../middleware/VerifyToken")
 
 const upload = multer();
 
-const { SISWA } = require("../utils/constants")
+const { SISWA, PEMBIMBING } = require("../utils/constants")
 
 var createJurnalHarianController = require("../controllers/jurnalHarian/CreateJurnalHarianController")
+var createCatatanPembimbingController = require("../controllers/jurnalHarian/CreateCatatanPembimbingController")
 
 router.post("/create", verifyToken, checkUserRole(SISWA), upload.single('foto'), createJurnalHarianController)
+router.post("/catatan/pembimbing/create", verifyToken, checkUserRole(PEMBIMBING), createCatatanPembimbingController)
 
 module.exports = router 
