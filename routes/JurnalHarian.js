@@ -11,9 +11,11 @@ const { SISWA, PEMBIMBING, INSTRUKTUR } = require("../utils/constants")
 var createJurnalHarianController = require("../controllers/jurnalHarian/CreateJurnalHarianController")
 var createCatatanPembimbingController = require("../controllers/jurnalHarian/CreateCatatanPembimbingController")
 var createCatatanInstrukturController = require("../controllers/jurnalHarian/CreateCatatanInstrukturController")
+var getJurnalHarianPembimbingInstrukturController = require("../controllers/jurnalHarian/GetJurnalHarianPembimbingInstrukturController")
 
 router.post("/create", verifyToken, checkUserRole(SISWA), upload.single('foto'), createJurnalHarianController)
 router.post("/catatan/pembimbing/create", verifyToken, checkUserRole(PEMBIMBING), createCatatanPembimbingController)
 router.post("/catatan/instruktur/create", verifyToken, checkUserRole(INSTRUKTUR), createCatatanInstrukturController)
+router.get("/get", verifyToken, checkUserRole([PEMBIMBING, INSTRUKTUR]), getJurnalHarianPembimbingInstrukturController)
 
-module.exports = router 
+module.exports = router
