@@ -11,6 +11,13 @@ const NONAKTIF  = "NONAKTIF"
 const PENDING   = "PENDING"
 const REJECT    = "REJECT"
 
+// Status Absesnsi
+const HADIR   = "HADIR"
+const LIBUR   = "LIBUR"
+const SAKIT   = "SAKIT"
+const ALPA    = "ALPA"
+const IZIN    = "IZIN"
+
 
 module.exports = {
     ADMINSEKOLAH,
@@ -23,5 +30,11 @@ module.exports = {
     AKTIF,
     NONAKTIF,
     PENDING,
-    REJECT
+    REJECT,
+
+    HADIR,
+    LIBUR,
+    SAKIT,
+    ALPA,
+    IZIN
 }

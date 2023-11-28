@@ -25,19 +25,14 @@ async function getAll(){
 
 async function findOne(where){
     try {
-        var data = await tahunAjaran.findFirst({
+        var data = await tahunAjaran.findFirstOrThrow({
             where
         })
 
-        if (data != null) {
-            return {success: true, data: data}
-        }else{
-            return {success: false, data: []}
-        }
-        
+        return {success: true, data: data}
     } catch (error) {
-        console.log(error)
-        return {success: false, data: []}
+        // console.log(error)
+        return {success: false, data: null}
     }
     
 }
