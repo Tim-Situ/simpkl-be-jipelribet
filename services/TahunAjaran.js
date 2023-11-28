@@ -13,9 +13,11 @@ async function createNew(data){
     }
 }
 
-async function getAll(){
+async function getAll(orderBy){
     try {
-        var allData = await tahunAjaran.findMany()
+        var allData = await tahunAjaran.findMany({
+            orderBy
+        })
         return {success: true, data: allData}
     } catch (error) {
         console.log(error)
