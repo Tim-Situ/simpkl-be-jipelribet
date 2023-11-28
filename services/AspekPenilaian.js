@@ -1,8 +1,8 @@
-var { nilaiBulanan } = require("../prisma/dbContext")
+var { aspekPenilaian } = require("../prisma/dbContext")
 
 async function createNew(data){
     try {
-        var newData = await nilaiBulanan.create({
+        var newData = await aspekPenilaian.create({
             data
         })
         return {success: true, data: newData}
@@ -12,12 +12,9 @@ async function createNew(data){
     }
 }
 
-async function getAll(where, orderBy){
+async function getAll(){
     try {
-        var allData = await nilaiBulanan.findMany({
-            where,
-            orderBy
-        })
+        var allData = await aspekPenilaian.findMany()
         return {success: true, data: allData}
     } catch (error) {
         console.log(error)
@@ -27,7 +24,7 @@ async function getAll(where, orderBy){
 
 async function findOne(where){
     try {
-        var data = await nilaiBulanan.findFirstOrThrow({
+        var data = await aspekPenilaian.findFirstOrThrow({
             where
         })
 
@@ -37,17 +34,16 @@ async function findOne(where){
     }
 }
 
-async function updateData(id, data) {
+async function updateData(id, data){
     try {
-        var dataUpdated = await nilaiBulanan.update({
+        var dataUpdated = await aspekPenilaian.update({
             where: {
                 id
             },
             data
         })
         return {success: true, data: dataUpdated}
-    }
-    catch (error) {
+    } catch (error) {
         console.log(error)
         return {success: false, data: []}
     }

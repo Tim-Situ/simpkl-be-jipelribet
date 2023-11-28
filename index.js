@@ -10,7 +10,8 @@ const app = express()
 
 app.use(cookieParser())
 app.use(cors({
-    credentials: true, origin: 'http://localhost:3000'
+    credentials: true,
+    origin: ['http://localhost:3000', 'https://sispensim.haululazkiyaa.id'],
 }))
 app.use(express.json())
 
@@ -33,6 +34,7 @@ app.use("/kelompok-bimbingan", require("./routes/KelompokBimbingan"))
 app.use("/tujuan-pembelajaran", require("./routes/TujuanPembelajaran"))
 app.use("/nilai-bulanan", require("./routes/NilaiBulanan"))
 app.use("/jurnal-harian", require("./routes/JurnalHarian"))
+app.use("/aspek-penilaian", require("./routes/AspekPenilaian"))
 
 app.listen(process.env.APP_PORT, () => {
     console.log("Server up and running...")
