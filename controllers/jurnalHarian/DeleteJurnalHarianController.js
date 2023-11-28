@@ -5,17 +5,11 @@ var jurnalHarianService = require("../../services/JurnalHarian")
 var siswaService = require("../../services/Siswa")
 var kelompokBimbinganService = require("../../services/KelompokBimbingan")
 
-async function handler (req, res) {
+async function handler(req, res) {
     var result = new BaseResponse()
 
     var schema = Joi.object({
-        id: Joi.string().required(),
-        jenis_pekerjaan: Joi.string().allow(null, ''),
-        deskripsi_pekerjaan: Joi.string().allow(null, ''),
-        bentuk_kegiatan: Joi.string().allow(null, ''),
-        jam_mulai: Joi.string().regex(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/).allow(null, ''),
-        jam_selesai: Joi.string().regex(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/).allow(null, ''),
-        staf: Joi.string().allow(null, ''),
+        id: Joi.string().required()
     })
 
     var { error, value } = schema.validate(req.body)
@@ -27,7 +21,7 @@ async function handler (req, res) {
         return res.status(400).json(result)
     }
 
-    var { id, jenis_pekerjaan, deskripsi_pekerjaan, bentuk_kegiatan, jam_mulai, jam_selesai, staf } = value
+    var { id } = value
 
     var cekJurnalHarian = await jurnalHarianService.findOne({
         id
@@ -59,37 +53,13 @@ async function handler (req, res) {
         return res.status(403).json(result)
     }
 
-    var startTime;
-    var endTime;
-    
-    if (jam_mulai) {
-        startTime = new Date();
-        var [hour, minute, second] = jam_mulai.split(':');
-        startTime.setUTCHours(parseInt(hour), parseInt(minute), parseInt(second));
-    }
+    var deleteData = await jurnalHarianService.deleteData({
+        id
+    })
 
-    if (jam_selesai) {
-        endTime = new Date();
-        var [hour, minute, second] = jam_selesai.split(':');
-        endTime.setUTCHours(parseInt(hour), parseInt(minute), parseInt(second));
-    }
-
-    var updatedData = await jurnalHarianService.updateData(
-        id,
-        {
-            jenis_pekerjaan,
-            deskripsi_pekerjaan,
-            bentuk_kegiatan, 
-            jam_mulai : startTime,
-            jam_selesai : endTime, 
-            staf,
-            updatedBy: req.username
-        }
-    )
-
-    if (updatedData.success) {
-        result.message = "Jurnal harian berhasil diubah..."
-        result.data = updatedData.data
+    if (deleteData.success) {
+        result.message = "Jurnal harian berhasil dihapus..."
+        result.data = deleteData.data
         return res.status(200).json(result)
     } else {
         result.success = false
