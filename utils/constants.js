@@ -18,7 +18,6 @@ const SAKIT   = "SAKIT"
 const ALPA    = "ALPA"
 const IZIN    = "IZIN"
 
-
 module.exports = {
     ADMINSEKOLAH,
     PEMBIMBING,

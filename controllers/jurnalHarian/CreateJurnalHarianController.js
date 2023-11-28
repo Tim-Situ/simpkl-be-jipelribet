@@ -2,9 +2,12 @@ var Joi = require("joi")
 
 const BaseResponse = require("../../dto/BaseResponse")
 var uploadFile = require("../../dto/ManageFile")
+var {timeSettings} = require("../../utils/constants")
 var jurnalHarianService = require("../../services/JurnalHarian")
 var kelompokBimbinganService = require("../../services/KelompokBimbingan")
 var siswaService = require("../../services/Siswa")
+
+const moment = require('moment-timezone');
 
 async function handler(req, res) {
     var result = new BaseResponse()
@@ -31,7 +34,8 @@ async function handler(req, res) {
 
     var { hari, tanggal, jenis_pekerjaan, deskripsi_pekerjaan, bentuk_kegiatan, jam_mulai, jam_selesai, staf } = value
 
-    const today = new Date();
+    // const today = new Date();
+    const today = moment().tz('Asia/Jakarta').format();
     const startTime = new Date();
     const endTime = new Date();
 

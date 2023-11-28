@@ -14,11 +14,13 @@ var createCatatanInstrukturController = require("../controllers/jurnalHarian/Cre
 var getJurnalHarianPembimbingInstrukturController = require("../controllers/jurnalHarian/GetJurnalHarianPembimbingInstrukturController")
 var updateJurnalHarianController = require("../controllers/jurnalHarian/UpdateJurnalHarianController")
 var deleteJurnalHarianController = require("../controllers/jurnalHarian/DeleteJurnalHarianController")
+var getJurnalHarianSiswaController = require("../controllers/jurnalHarian/GetJurnalHarianSiswaController")
 
 router.post("/create", verifyToken, checkUserRole(SISWA), upload.single('foto'), createJurnalHarianController)
 router.post("/catatan/pembimbing/create", verifyToken, checkUserRole(PEMBIMBING), createCatatanPembimbingController)
 router.post("/catatan/instruktur/create", verifyToken, checkUserRole(INSTRUKTUR), createCatatanInstrukturController)
-router.get("/get", verifyToken, checkUserRole([PEMBIMBING, INSTRUKTUR]), getJurnalHarianPembimbingInstrukturController)
+router.get("/bimbingan/get", verifyToken, checkUserRole([PEMBIMBING, INSTRUKTUR]), getJurnalHarianPembimbingInstrukturController)
+router.get("/siswa/get", verifyToken, checkUserRole(SISWA), getJurnalHarianSiswaController)
 router.put("/update", verifyToken, checkUserRole(SISWA), updateJurnalHarianController)
 router.delete("/delete", verifyToken, checkUserRole(SISWA), deleteJurnalHarianController)
 
