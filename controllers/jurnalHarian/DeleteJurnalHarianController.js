@@ -59,7 +59,7 @@ async function handler(req, res) {
 
     if (deleteData.success) {
         result.message = "Jurnal harian berhasil dihapus..."
-        result.data = deleteData.data
+        // result.data = deleteData.data
         return res.status(200).json(result)
     } else {
         result.success = false

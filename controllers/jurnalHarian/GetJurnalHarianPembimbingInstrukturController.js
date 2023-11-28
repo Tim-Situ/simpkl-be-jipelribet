@@ -29,7 +29,7 @@ async function handler(req, res) {
 
     if (req.role === "PEMBIMBING") {
         var cekGuruPembimbing = await guruPembimbingService.findOne({
-            username: req.username
+            nip: req.username
         })
         
         var id_guru_pembimbing = cekKelompokBimbingan.data.id_guru_pembimbing
@@ -70,7 +70,7 @@ async function handler(req, res) {
     if (jurnalHarian.success && jurnalHarian.data.length == 0) {
         result.success = true
         result.message = "Data jurnal harian tidak ditemukan..."
-        return res.status(200).json(result)
+        return res.status(404).json(result)
     } else if (jurnalHarian.success) {
         result.success = true
         result.message = "Data jurnal harian berhasil ditampilkan..."
