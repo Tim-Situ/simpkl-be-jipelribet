@@ -56,9 +56,24 @@ async function updateData(id, data){
     }
 }
 
+async function deleteData(where) {
+    try {
+        var dataDeleted = await jurnalHarian.delete({
+            where
+        })
+
+        return {success: true, data: dataDeleted}
+    }
+    catch (error) {
+        console.log(error)
+        return {success: false, data: []}
+    }
+}
+
 module.exports = {
     createNew,
     getAll,
     findOne,
-    updateData
+    updateData,
+    deleteData
 }
