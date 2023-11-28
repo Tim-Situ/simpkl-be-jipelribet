@@ -11,7 +11,7 @@ const app = express()
 app.use(cookieParser())
 app.use(cors({
     credentials: true,
-    origin: ['http://localhost:3000', 'https://sispensim.haululazkiyaa.id'],
+    origin: ['http://localhost:3000', 'https://sispensim-prod.haululazkiyaa.id', 'https://sispensim.haululazkiyaa.id'],
 }))
 app.use(express.json())
 
