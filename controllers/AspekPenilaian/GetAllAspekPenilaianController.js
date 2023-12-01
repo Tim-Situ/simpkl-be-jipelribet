@@ -17,11 +17,11 @@ async function handler(req, res) {
     if (aspekPenilaian.success) {
         result.message = "Aspek penilaian berhasil ditampilkan..."
         result.data = aspekPenilaian.data
-        res.status(200).json(result)
+        return res.status(200).json(result)
     } else {
         result.success = false
         result.message = "Internal Server Error"
-        res.status(500).json(result)
+        return res.status(500).json(result)
     }
 }
 

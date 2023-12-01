@@ -31,11 +31,11 @@ async function handler(req, res) {
     if (newAspekPenilaian.success) {
         result.message = "Aspek Penilaian berhasil ditambahkan..."
         result.data = newAspekPenilaian.data
-        res.status(201).json(result)
+        return res.status(201).json(result)
     } else {
         result.success = false
         result.message = "Internal Server Error"
-        res.status(500).json(result)
+        return res.status(500).json(result)
     }
 }
 
