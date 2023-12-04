@@ -4,7 +4,6 @@ const Joi = require("joi");
 var guruPembimbingService = require("../../services/GuruPembimbing")
 var kelompokBimbinganService = require("../../services/KelompokBimbingan");
 var absensiService = require("../../services/Absensi");
-const { log } = require("console");
 
 async function handler(req, res) {
     var result = new BaseResponse()
@@ -63,7 +62,7 @@ async function handler(req, res) {
 
     if (createdAbsensi.success) {
         result.success = true
-        result.message = "Aspek Penilaian berhasil ditambahkan..."
+        result.message = "Absensi bimbingan berhasil disimpan..."
         result.data = createdAbsensi.data
         return res.status(201).json(result)
     } else {
