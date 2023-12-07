@@ -20,6 +20,26 @@ async function handler(req, res) {
 
     var { tahun_ajaran } = value
 
+    const formatTahunAjaran = /^\d{4}-[12]$/;
+
+    if (!formatTahunAjaran.test(tahun_ajaran)) {
+        result.success = false
+        result.message = "Data tahun ajaran tidak sesuai dengan format yang ditentukan!"
+        result.data = null
+        return res.status(400).json(result)
+    }
+
+    var cekData = await tahunAjaranService.findOne({
+        tahun_ajaran
+    })
+
+    if (cekData.success) {
+        result.success = false
+        result.message = "Data tahun ajaran tersebut sudah tersedia..."
+        result.data = null
+        return res.status(400).json(result)
+    }
+
     var newData = await tahunAjaranService.createNew({
         tahun_ajaran
     })

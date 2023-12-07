@@ -6,7 +6,12 @@ const BaseResponse = require("../../dto/BaseResponse")
 async function handler(req, res) {
     var result = new BaseResponse()
 
-    var tahunAjaran = await tahunAjaranService.getAll()
+    var orderBy = [
+        {status: 'desc'},
+        {tahun_ajaran: 'desc'},
+    ]
+
+    var tahunAjaran = await tahunAjaranService.getAll(orderBy)
 
     if(tahunAjaran.success && tahunAjaran.data.length == 0){
         result.success = true

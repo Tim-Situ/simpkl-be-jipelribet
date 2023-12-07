@@ -52,7 +52,7 @@ async function handler(req, res) {
     if (id_instruktur !== user_id) {
         result.success = false
         result.message = "Anda tidak memiliki akses ke jurnal ini..."
-        result.data = id_instruktur + " " + user_id
+        //result.data = id_instruktur + " " + user_id
         return res.status(403).json(result)
     }
 
