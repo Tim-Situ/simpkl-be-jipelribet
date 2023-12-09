@@ -22,6 +22,21 @@ async function createBulk(data) {
     }
 }
 
+async function search(where, orderBy) {
+    try {
+        var data = await absensi.findMany({
+            where,
+            orderBy
+        })
+        return { success: true, data: data }
+    }
+    catch (error) {
+        console.log(error)
+        return { success: false, data: [] }
+    }
+}
+
 module.exports = {
-    createBulk
+    createBulk,
+    search
 }
