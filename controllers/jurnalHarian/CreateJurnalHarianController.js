@@ -51,8 +51,38 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
+    if (!req.file) {
+        result.success = false
+        result.message = "Foto kegiatan tidak boleh kosong..."
+        return res.status(400).json(result)
+    }
+
+    var dataSiswa = await siswaService.findOne({
+        nisn: req.username
+    })
+
+    if (!dataSiswa.success) {
+        result.success = false
+        result.message = "Terjadi kesalahan dalam sistem..."
+        return res.status(500).json(result)
+    }
+
+    var dataKelompokBimbingan = await kelompokBimbinganService.findOne({
+        AND: [
+            { id_siswa : dataSiswa.data.id },
+            { status : true }
+        ]
+    })
+
+    if (!dataKelompokBimbingan.success) {
+        result.success = false
+        result.message = "Data kelompok bimbingan yang aktif tidak ditemukan..."
+        return res.status(400).json(result)
+    }
+
     var cekJurnalHarian = await jurnalHarianService.findOne({
-        tanggal
+        tanggal,
+        id_bimbingan: dataKelompokBimbingan.data.id
     })
 
     if (cekJurnalHarian.success) {
@@ -61,37 +91,8 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    if (!req.file) {
-        result.success = false
-        result.message = "Foto kegiatan tidak boleh kosong..."
-        return res.status(400).json(result)
-    }
-
     try {
         const fotoUrl = await uploadFile.uploadImageToS3(req.file, req.username);
-
-        var dataSiswa = await siswaService.findOne({
-            nisn: req.username
-        })
-    
-        if (!dataSiswa.success) {
-            result.success = false
-            result.message = "Terjadi kesalahan dalam sistem..."
-            return res.status(500).json(result)
-        }
-    
-        var dataKelompokBimbingan = await kelompokBimbinganService.findOne({
-            AND: [
-                { id_siswa : dataSiswa.data.id },
-                { status : true }
-            ]
-        })
-    
-        if (!dataKelompokBimbingan.success) {
-            result.success = false
-            result.message = "Data kelompok bimbingan yang aktif tidak ditemukan..."
-            return res.status(400).json(result)
-        }
     
         var newData = await jurnalHarianService.createNew({
             id_bimbingan: dataKelompokBimbingan.data.id,
