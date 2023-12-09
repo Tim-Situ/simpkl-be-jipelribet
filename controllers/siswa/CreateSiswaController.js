@@ -46,7 +46,7 @@ async function handler(req, res) {
     }
 
     const salt = await bcrypt.genSalt();
-    const hashPassword = await bcrypt.hash(password, salt)
+    const hashPassword = await bcrypt.hash(password.data, salt)
 
     var cekUsername = await userService.findUser({
         username : nisn
@@ -71,7 +71,7 @@ async function handler(req, res) {
     var newUser = await userService.createUser({
         username : nisn,
         password : hashPassword,
-        temp_password : password,
+        temp_password : password.data,
         role,
         createdBy : req.username
     })
