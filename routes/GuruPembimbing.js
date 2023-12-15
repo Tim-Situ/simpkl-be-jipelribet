@@ -7,10 +7,12 @@ var getAllGuruPembimbingController = require("../controllers/guruPembimbing/GetA
 var createGuruPembimbingController = require("../controllers/guruPembimbing/CreateGuruPembimbingController")
 var updateGuruPembimbingController = require("../controllers/guruPembimbing/UpdateGuruPembimbingController")
 var updateStatusGuruPembimbingController = require("../controllers/guruPembimbing/UpdateStatusGuruPembimbingController")
+var deleteGuruPembimbingController = require("../controllers/guruPembimbing/DeleteGuruPembimbingController")
 
 router.get("/all", verifyToken, checkUserRole(ADMINSEKOLAH), getAllGuruPembimbingController)
 router.post("/create", verifyToken, checkUserRole(ADMINSEKOLAH), createGuruPembimbingController)
 router.put("/update", verifyToken, checkUserRole(ADMINSEKOLAH), updateGuruPembimbingController)
 router.put("/status", verifyToken, checkUserRole(ADMINSEKOLAH), updateStatusGuruPembimbingController)
+router.delete("/delete", verifyToken, checkUserRole(ADMINSEKOLAH), deleteGuruPembimbingController)
 
 module.exports = router 
