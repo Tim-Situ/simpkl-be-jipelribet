@@ -21,7 +21,7 @@ router.post("/catatan/pembimbing/create", verifyToken, checkUserRole(PEMBIMBING)
 router.post("/catatan/instruktur/create", verifyToken, checkUserRole(INSTRUKTUR), createCatatanInstrukturController)
 router.get("/bimbingan/get", verifyToken, checkUserRole([PEMBIMBING, INSTRUKTUR]), getJurnalHarianPembimbingInstrukturController)
 router.get("/siswa/get", verifyToken, checkUserRole(SISWA), getJurnalHarianSiswaController)
-router.put("/update", verifyToken, checkUserRole(SISWA), updateJurnalHarianController)
+router.put("/update", verifyToken, checkUserRole(SISWA), upload.single('foto'), updateJurnalHarianController)
 router.delete("/delete", verifyToken, checkUserRole(SISWA), deleteJurnalHarianController)
 
 module.exports = router

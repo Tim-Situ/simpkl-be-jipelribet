@@ -1,6 +1,8 @@
 const BaseResponse = require("../../dto/BaseResponse")
 const Joi = require("joi")
 
+var uploadFile = require("../../dto/ManageFile")
+
 var jurnalHarianService = require("../../services/JurnalHarian")
 var siswaService = require("../../services/Siswa")
 var kelompokBimbinganService = require("../../services/KelompokBimbingan")
@@ -51,6 +53,18 @@ async function handler(req, res) {
         result.success = false
         result.message = "Anda tidak memiliki akses untuk mengubah jurnal harian ini..."
         return res.status(403).json(result)
+    }
+
+    try {
+        const url = cekJurnalHarian.data.foto
+        const lastSlashIndex = url.lastIndexOf('/');
+        const fileName2 = url.substring(lastSlashIndex + 1);
+
+        const deleteFile = await uploadFile.deleteImageFromS3(req.username, fileName2)
+    } catch (error) {
+        result.success = false
+        result.message = "Terjadi kesalahan saat delete foto"
+        return res.status(500).json(result)
     }
 
     var deleteData = await jurnalHarianService.deleteData({
