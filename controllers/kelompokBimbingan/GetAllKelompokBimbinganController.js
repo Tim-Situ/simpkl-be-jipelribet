@@ -1,11 +1,25 @@
 var kelompokBimbinganService = require("../../services/KelompokBimbingan")
+var tahunAjaranService = require("../../services/TahunAjaran")
+
 const BaseResponse = require("../../dto/BaseResponse")
 
 async function handler(req, res) {
     var result = new BaseResponse()
     var where, select, orderBy
 
-    where = {}
+    var tahunAjaran = await tahunAjaranService.findOne({
+        status: true
+    })
+
+    if(!tahunAjaran.success){
+        result.success = false
+        result.message = "Terjadi kesalahan di sistem..."
+        return res.status(500).json(result)
+    }
+
+    where = {
+        id_tahun_ajaran: tahunAjaran.data.id
+    }
     select = {
         id: true,
         status: true,
