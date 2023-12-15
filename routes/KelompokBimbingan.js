@@ -11,6 +11,7 @@ var getKelompokBimbinganSiswaController = require("../controllers/kelompokBimbin
 var getKelompokBimbinganPerusahaanController = require("../controllers/kelompokBimbingan/GetKelompokBimbinganPerusahaanController")
 var getKelompokBimbinganInstrukturController = require("../controllers/kelompokBimbingan/GetKelompokBimbinganInstrukturController")
 var deleteKelompokBimbinganInstrukturController = require("../controllers/kelompokBimbingan/DeleteKelompokBimbinganController")
+var updateInstrukturKelompokBimbinganPerusahaanController = require("../controllers/kelompokBimbingan/UpdateInstrukturController")
 
 router.get("/all", verifyToken, checkUserRole(ADMINSEKOLAH), getAllKelompokBimbinganController)
 router.post("/create", verifyToken, checkUserRole(ADMINSEKOLAH), createKelompokBimbinganController)
@@ -20,5 +21,6 @@ router.get("/siswa", verifyToken, checkUserRole(SISWA), getKelompokBimbinganSisw
 router.get("/perusahaan", verifyToken, checkUserRole(PERUSAHAAN), getKelompokBimbinganPerusahaanController)
 router.get("/instruktur", verifyToken, checkUserRole(INSTRUKTUR), getKelompokBimbinganInstrukturController)
 router.delete("/delete", verifyToken, checkUserRole(ADMINSEKOLAH), deleteKelompokBimbinganInstrukturController)
+router.put("/update-instruktur", verifyToken, checkUserRole(PERUSAHAAN), updateInstrukturKelompokBimbinganPerusahaanController)
 
 module.exports = router
