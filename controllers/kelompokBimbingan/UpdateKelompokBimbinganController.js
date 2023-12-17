@@ -93,6 +93,17 @@ async function handler(req, res) {
             result.message = "Data perusahaan tidak aktif..."
             return res.status(400).json(result)
         }
+
+        var cekKelompokBimbingan = await kelompokBimbinganService.findOne({
+            id_siswa : dataKelompokBimbingan.data.id_siswa,
+            id_perusahaan
+        })
+    
+        if (dataKelompokBimbingan.success && cekKelompokBimbingan.data.id != dataKelompokBimbingan.data.id) {
+            result.success = false
+            result.message = "Siswa ini sudah pernah terdaftar pada perusahaan ini sebelumnya..."
+            return res.status(400).json(result)
+        }
     }
 
     if (id_instruktur) {
@@ -120,16 +131,6 @@ async function handler(req, res) {
             result.message = "Data instruktur sudah tidak aktif..."
             return res.status(400).json(result)
         }
-    }
-
-    var cekKelompokBimbingan = await kelompokBimbinganService.findOne({
-        id_perusahaan
-    })
-
-    if (dataKelompokBimbingan.success && cekKelompokBimbingan.data.id != dataKelompokBimbingan.data.id) {
-        result.success = false
-        result.message = "Siswa ini sudah pernah terdaftar pada perusahaan ini sebelumnya..."
-        return res.status(400).json(result)
     }
 
     if (status && status == true) {
