@@ -4,6 +4,13 @@ async function verifyToken(req, res, next) {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1];
 
+    return res.status(401).json({
+        success: false,
+        message: 'TTTTEEEEESSSSSSSS',
+        token: token,
+        authHeader
+    });
+
     if(token == null){
         return res.status(401).json({
             success: false,
