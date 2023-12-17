@@ -36,7 +36,22 @@ async function search(where, orderBy) {
     }
 }
 
+async function findOne(where){
+    try {
+        var data = await absensi.findFirstOrThrow({
+            where
+        })
+
+        return {success: true, data: data}
+    } catch (error) {
+        // console.log(error)
+        return {success: false, data: null}
+    }
+    
+}
+
 module.exports = {
     createBulk,
-    search
+    search,
+    findOne
 }

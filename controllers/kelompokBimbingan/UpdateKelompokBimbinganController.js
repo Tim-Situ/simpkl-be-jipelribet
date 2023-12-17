@@ -1,5 +1,6 @@
 const BaseResponse = require("../../dto/BaseResponse")
 var Joi = require("joi")
+var {AKTIF} = require("../../utils/constants")
 
 var siswaService = require("../../services/Siswa")
 var guruPembimbingService = require("../../services/GuruPembimbing")
@@ -13,7 +14,6 @@ async function handler(req, res) {
 
     var schema = Joi.object({
         id: Joi.string().required(),
-        id_siswa : Joi.string().allow(null, ''),
         id_guru_pembimbing : Joi.string().allow(null, ''),
         id_perusahaan : Joi.string().allow(null, ''),
         id_instruktur : Joi.string().allow(null, ''),
@@ -29,7 +29,7 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    var { id, id_siswa, id_guru_pembimbing, id_perusahaan, id_instruktur, status } = value
+    var { id, id_guru_pembimbing, id_perusahaan, id_instruktur, status } = value
 
     var dataKelompokBimbingan = await kelompokBimbinganService.findOne({
         id
@@ -41,17 +41,23 @@ async function handler(req, res) {
         return res.status(404).json(result)
     }
 
-    if (id_siswa) {
-        var cekSiswa = await siswaService.findOne({
-            id: id_siswa
-        })
+    // if (id_siswa) {
+    //     var cekSiswa = await siswaService.findOne({
+    //         id: id_siswa
+    //     })
     
-        if(!cekSiswa.success){
-            result.success = false
-            result.message = "Data siswa tidak terdaftar..."
-            return res.status(400).json(result)
-        }
-    }
+    //     if(!cekSiswa.success){
+    //         result.success = false
+    //         result.message = "Data siswa tidak terdaftar..."
+    //         return res.status(400).json(result)
+    //     }
+
+    //     if(cekSiswa.success && !cekSiswa.data.status_aktif){
+    //         result.success = false
+    //         result.message = "Data siswa sudah tidak aktif..."
+    //         return res.status(400).json(result)
+    //     }
+    // }
 
     if (id_guru_pembimbing) {
         var cekGuruPembimbing = await guruPembimbingService.findOne({
@@ -61,6 +67,12 @@ async function handler(req, res) {
         if(!cekGuruPembimbing.success){
             result.success = false
             result.message = "Data guru pembimbing tidak terdaftar..."
+            return res.status(400).json(result)
+        }
+
+        if(cekGuruPembimbing.success && !cekGuruPembimbing.data.status_aktif){
+            result.success = false
+            result.message = "Data guru pembimbing sudah tidak aktif..."
             return res.status(400).json(result)
         }
     }
@@ -73,6 +85,12 @@ async function handler(req, res) {
         if(!cekPerusahaan.success){
             result.success = false
             result.message = "Data perusahaan tidak terdaftar..."
+            return res.status(400).json(result)
+        }
+
+        if(cekPerusahaan.success && cekPerusahaan.data.status != AKTIF){
+            result.success = false
+            result.message = "Data perusahaan tidak aktif..."
             return res.status(400).json(result)
         }
     }
@@ -97,13 +115,49 @@ async function handler(req, res) {
             result.message = "Data instruktur tidak terdaftar pada perusahaan yang dipilih..."
             return res.status(400).json(result)
         
+        }else if(cekInstruktur.success && !cekInstruktur.data.status_aktif){
+            result.success = false
+            result.message = "Data instruktur sudah tidak aktif..."
+            return res.status(400).json(result)
+        }
+    }
+
+    var cekKelompokBimbingan = await kelompokBimbinganService.findOne({
+        id_perusahaan
+    })
+
+    if (dataKelompokBimbingan.success && cekKelompokBimbingan.data.id != dataKelompokBimbingan.data.id) {
+        result.success = false
+        result.message = "Siswa ini sudah pernah terdaftar pada perusahaan ini sebelumnya..."
+        return res.status(400).json(result)
+    }
+
+    if (status && status == true) {
+        cekKelompokBimbingan = await kelompokBimbinganService.findOne({
+            id_siswa: dataKelompokBimbingan.data.id_siswa,
+            status: true
+        })
+    
+        if(cekKelompokBimbingan.success){
+            var nonAktifKelompokBimbingan = await kelompokBimbinganService.updateData(
+                {id : cekKelompokBimbingan.data.id},
+                { 
+
+                    status: false 
+                }
+            )
+    
+            if (!nonAktifKelompokBimbingan.success) {
+                result.success = false
+                result.message = "Internal Server Error"
+                return res.status(500).json(result)
+            }
         }
     }
 
     var updateKelompokBimbingan = await kelompokBimbinganService.updateData(
         {id},
         {
-            id_siswa,
             id_guru_pembimbing,
             id_perusahaan,
             id_instruktur,

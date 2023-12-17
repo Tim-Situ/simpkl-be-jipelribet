@@ -27,10 +27,19 @@ async function handler(req, res) {
         return res.status(500).json(result)
     }
 
-    where = {
-        id_perusahaan: perusahaan.data.id,
-        id_tahun_ajaran: tahunAjaran.data.id
+    if(req.query.idInstruktur){
+        where = {
+            id_perusahaan: perusahaan.data.id,
+            id_tahun_ajaran: tahunAjaran.data.id,
+            id_instruktur: req.query.idInstruktur
+        }
+    }else{
+        where = {
+            id_perusahaan: perusahaan.data.id,
+            id_tahun_ajaran: tahunAjaran.data.id,
+        }
     }
+
     orderBy = {
         status: 'desc'
     }

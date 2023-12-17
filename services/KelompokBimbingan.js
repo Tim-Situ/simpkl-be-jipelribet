@@ -83,10 +83,25 @@ async function updateData(where, data){
     }
 }
 
+async function deleteData(where) {
+    try {
+        var dataDeleted = await kelompokBimbingan.delete({
+            where
+        })
+
+        return {success: true, data: dataDeleted}
+    }
+    catch (error) {
+        // console.log(error)
+        return {success: false, data: null}
+    }
+}
+
 module.exports = {
     createNew,
     getAll,
     findOne,
     updateData,
-    search
+    search,
+    deleteData
 }

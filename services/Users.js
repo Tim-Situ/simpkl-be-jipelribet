@@ -87,11 +87,26 @@ async function getProfile(where, select){
     }
 }
 
+async function deleteData(where) {
+    try {
+        var dataDeleted = await user.delete({
+            where
+        })
+
+        return {success: true, data: dataDeleted}
+    }
+    catch (error) {
+        // console.log(error)
+        return {success: false, data: null}
+    }
+}
+
 module.exports = {
     createUser,
     registerAdminSekolah,
     findUser,
     updateRefreshToken,
     updateUser,
-    getProfile
+    getProfile,
+    deleteData
 }
