@@ -9,7 +9,7 @@ async function handler(req, res) {
     var schema = Joi.object({
         id: Joi.string().required(),
         judul : Joi.string().allow(null, ''),
-        kode : Joi.string().uppercase().length(1).allow(null),
+        kelompok_penilaian : Joi.string(),
     })
 
     var { error, value } = schema.validate(req.body)
@@ -21,7 +21,7 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    var { id, judul, kode } = value
+    var { id, judul, kelompok_penilaian } = value
 
     var cekAspekPenilaian = await aspekPenilaianService.findOne({
         id
@@ -37,7 +37,7 @@ async function handler(req, res) {
         id,
         {
             judul,
-            kode,
+            kelompok_penilaian,
             updatedBy: req.username
         }
     )
