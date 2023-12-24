@@ -53,7 +53,7 @@ async function handler(req, res) {
         });
     } else {
         where = {
-            id_bimbingan,
+            id_bimbingan : cekKelompokBimbingan.data[0].id,
             tanggal: {
                 gte: new Date(tahun, bulan - 1, 1),
                 lt: new Date(tahun, bulan, 1)

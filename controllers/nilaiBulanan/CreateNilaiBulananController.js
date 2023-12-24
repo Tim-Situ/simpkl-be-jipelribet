@@ -11,11 +11,15 @@ async function handler(req, res) {
 
     var schema = Joi.object({
         id_bimbingan : Joi.string().required(),
-        id_tujuan_pembelajaran : Joi.string().required(),
         bulan : Joi.number().integer().min(1).max(12).required(),
         tahun : Joi.number().integer().min(2000).max(9999).required(),
-        nilai: Joi.number().integer().min(0).max(100).required(),
-        deskripsi: Joi.string().required()
+        data: Joi.array().items(
+            Joi.object({
+                id_tujuan_pembelajaran : Joi.string().required(),
+                nilai: Joi.number().integer().min(0).max(100).required(),
+                deskripsi: Joi.string().required()
+            })
+        ),
     })
 
     var { error, value } = schema.validate(req.body)
@@ -27,7 +31,7 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    var { id_bimbingan, id_tujuan_pembelajaran, bulan, tahun, nilai, deskripsi } = value
+    var { id_bimbingan, bulan, tahun, data} = value
     var id_guru_pembimbing
 
     var cekKelompokBimbingan = await kelompokBimbinganService.findOne({
@@ -40,14 +44,16 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    var cekTujuanPembelajaran = await tujuanPembelajaranService.findOne({
-        id: id_tujuan_pembelajaran
-    })
-
-    if (!cekTujuanPembelajaran.success) {
-        result.success = false
-        result.message = "Data tujuan pembelajaran tidak ditemukan..."
-        return res.status(400).json(result)
+    for (let i = 0; i < data.length; i++) {
+        var cekTujuanPembelajaran = await tujuanPembelajaranService.findOne({
+            id: data[i].id_tujuan_pembelajaran
+        })
+    
+        if (!cekTujuanPembelajaran.success) {
+            result.success = false
+            result.message = "Salah satu data tujuan pembelajaran tidak ditemukan..."
+            return res.status(400).json(result)
+        }
     }
 
     // Revisi: pengecekan guru pembimbing di kelompok bimbingan
@@ -74,13 +80,11 @@ async function handler(req, res) {
         return res.status(403).json(result)
     }
 
-    var newNilaiBulanan = await nilaiBulananService.createNew({
+    var newNilaiBulanan = await nilaiBulananService.createBulk({
         id_bimbingan,
-        id_tujuan_pembelajaran,
         bulan,
         tahun,
-        nilai,
-        deskripsi,
+        nilaiBulanan: data,
         createdBy: req.username,
     })
 

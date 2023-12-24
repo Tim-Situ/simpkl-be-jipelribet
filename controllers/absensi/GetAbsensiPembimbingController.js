@@ -2,100 +2,151 @@ const BaseResponse = require('../../dto/BaseResponse')
 const guruPembimbingService = require('../../services/GuruPembimbing')
 const kelompokBimbinganService = require("../../services/KelompokBimbingan")
 const absensiService = require("../../services/Absensi")
+const jurnalService = require("../../services/JurnalHarian")
 
 async function handler(req, res) {
     const result = new BaseResponse()
 
-    if ( !req.query.bulan || !req.query.tahun || !req.query.bimbingan ) {
+    var where, select, orderBy
+    orderBy = {}
+
+    if ( !req.query.tanggal) {
         result.success = false
-        result.message = "Parameter bulan, tahun dan bimbingan harus diisi..."
+        result.message = "Parameter tanggal harus diisi..."
         return res.status(400).json(result)
     }
 
-    const bulan = req.query.bulan
-    const tahun = req.query.tahun
-    const id_bimbingan = req.query.bimbingan
+    var tanggal = new Date(req.query.tanggal)
 
-    var cekKelompokBimbingan = await kelompokBimbinganService.findOne({
-        id: id_bimbingan
-    })
-
-    if (!cekKelompokBimbingan.success) {
-        result.success = false
-        result.message = "Kelompok bimbingan tidak ditemukan..."
-        return res.status(400).json(result)
-    }
-
-    const id_guru_pembimbing = cekKelompokBimbingan.data.id_guru_pembimbing
-
-    var cekGuruPembimbing = await guruPembimbingService.findOne({
+    var cekGuruPembimbing =  await guruPembimbingService.findOne({
         nip: req.username
     })
 
-    const user_id = cekGuruPembimbing.data.id
+    var id_guru_pembimbing = cekGuruPembimbing.data.id
 
-    if (id_guru_pembimbing !== user_id) {
-        result.success = false
-        result.message = "Anda tidak memiliki akses ke absensi ini..."
-        return res.status(403).json(result)
+    select = {
+        id: true,
+        status: true,
+    }
+
+    where = {
+        id_guru_pembimbing 
+    }
+
+    var cekKelompokBimbingan = await kelompokBimbinganService.getAll(
+        where, select, orderBy
+    )
+
+    if (cekKelompokBimbingan.data.length > 1) {
+        where = {
+            OR: [],
+            tanggal
+        }
+        
+        cekKelompokBimbingan.data.forEach(data => {
+            where.OR.push({ id_bimbingan: data.id });
+        });
+    } else {
+        where = {
+            id_bimbingan : cekKelompokBimbingan.data[0].id,
+            tanggal,
+        }
+    }
+
+    include = {
+        kelompok_bimbingan: {
+            include: {
+                siswa: true
+            }
+        }
     }
 
     var absensi = await absensiService.search(
-        {
-            id_bimbingan,
-            tanggal: {
-                gte: new Date(tahun, bulan - 1, 1),
-                lt: new Date(tahun, bulan, 1)
-            },
-        },
+        where,
+        include,
         {
             tanggal: 'asc',
         }
     )
 
     if (absensi.success && absensi.data.length > 0) {
-        
-        var jml_kehadiran = {
-            HADIR: 0,
-            LIBUR: 0,
-            SAKIT: 0,
-            ALPA: 0,
-            IZIN: 0,
-        }
-
-        absensi.data.forEach(element => {
-            if (element.status === "HADIR") {
-                jml_kehadiran.HADIR += 1
-            } else if (element.status === "LIBUR") {
-                jml_kehadiran.LIBUR += 1
-            } else if (element.status === "SAKIT") {
-                jml_kehadiran.SAKIT += 1
-            } else if (element.status === "ALPA") {
-                jml_kehadiran.ALPA += 1
-            } else if (element.status === "IZIN") {
-                jml_kehadiran.IZIN += 1
-            }
-        });
-
-        var dataAbsensi = {
-            jml_kehadiran,
-            data_kehadiran: absensi.data
-        }
-
         result.success = true
         result.message = "Data absensi berhasil ditampilkan..."
-        result.data = dataAbsensi
-        return res.status(200).json(result)
-    } else if (absensi.success && absensi.data.length === 0) {
-        result.success = true
-        result.message = "Data absensi tidak ditemukan..."
         result.data = absensi.data
-        return res.status(401).json(result)
-    } else {
+        return res.status(200).json(result)
+
+    }
+    
+    // Jika data belum ada di db, maka cek jurnal harian
+
+    select = {
+        id: true,
+        status: true,
+        siswa: {
+            select: {
+                id: true,
+                nis: true,
+                nisn: true,
+                nama: true
+            }
+        }
+    }
+
+    where = {
+        id_guru_pembimbing,
+        status: true
+    }
+
+    var cekKelompokBimbingan = await kelompokBimbinganService.getAll(
+        where, select, orderBy
+    )
+
+    if (cekKelompokBimbingan.success && cekKelompokBimbingan.data.length == 0) {
+        result.success = false
+        result.message = "Data Kelompok Bimbingan Tidak Ditemukan"
+        return res.status(404).json(result)
+    }else if(!cekKelompokBimbingan.success){
         result.success = false
         result.message = "Internal Server Error"
         return res.status(500).json(result)
     }
+
+    var dataResponse = []
+
+    for (let i = 0; i < cekKelompokBimbingan.data.length; i++) {
+        var jurnal = await jurnalService.findOne({
+            id_bimbingan : cekKelompokBimbingan.data[i].id,
+            tanggal
+        })
+        
+        dataResponse.push({
+            id_bimbingan: cekKelompokBimbingan.data[i].id,
+            tanggal,
+            status: "-",
+            kelompok_bimbingan: {
+                id: cekKelompokBimbingan.data[i].id,
+                siswa: {
+                    id: cekKelompokBimbingan.data[i].siswa.id,
+                    nis: cekKelompokBimbingan.data[i].siswa.nis,
+                    nisn: cekKelompokBimbingan.data[i].siswa.nisn,
+                    nama: cekKelompokBimbingan.data[i].siswa.nama,
+                }
+            }
+        })
+
+        if (jurnal.success) {
+            dataResponse[i].status = "HADIR"
+        } else {
+            dataResponse[i].status = "ALPA"
+        }
+    }
+
+    result.success = true
+    result.message = "Data absensi berhasil ditampilkan..."
+    result.data = dataResponse
+    res.status(200).json(result)
+
+    
 }
 
 module.exports = handler
