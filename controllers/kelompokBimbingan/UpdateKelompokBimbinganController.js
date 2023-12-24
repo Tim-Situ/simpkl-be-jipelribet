@@ -14,7 +14,6 @@ async function handler(req, res) {
 
     var schema = Joi.object({
         id: Joi.string().required(),
-        id_siswa: Joi.string(),
         id_guru_pembimbing : Joi.string().allow(null, ''),
         id_perusahaan : Joi.string().allow(null, ''),
         id_instruktur : Joi.string().allow(null, ''),
@@ -30,7 +29,7 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    var { id, id_guru_pembimbing, id_perusahaan, id_instruktur, status, id_siswa } = value
+    var { id, id_guru_pembimbing, id_perusahaan, id_instruktur, status } = value
 
     var dataKelompokBimbingan = await kelompokBimbinganService.findOne({
         id
@@ -169,7 +168,7 @@ async function handler(req, res) {
     )
 
     if (updateKelompokBimbingan.success) {
-        result.message = "Data Kelompok Bimbingan berhasil diubah..."
+        result.message = "Data Profile berhasil diubah..."
         result.data = updateKelompokBimbingan.data
         res.status(200).json(result)
     } else {
