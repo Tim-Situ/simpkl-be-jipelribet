@@ -10,11 +10,37 @@ async function createBulk(data) {
                 id_bimbingan : data.absensi[i].id_bimbingan,
                 status : data.absensi[i].status,
             })
+
+            // Menggunakan 'findFirst' untuk mencari data berdasarkan 'id_bimbingan' dan 'tanggal'
+            const existingAbsen = await absensi.findFirst({
+                where: {
+                    id_bimbingan: data.absensi[i].id_bimbingan,
+                    tanggal: data.tanggal,
+                }
+            });
+
+            if (existingAbsen) {
+                // Jika data sudah ada, lakukan update
+                var updatedAbsen = await absensi.update({
+                    where: {
+                        id: existingAbsen.id // Menggunakan 'id' yang telah ditemukan
+                    },
+                    data: {
+                        status: data.absensi[i].status
+                    }
+                });
+            } else {
+                // Jika data belum ada, lakukan pembuatan data baru
+                var newAbsen = await absensi.create({
+                    data: arrData[i]
+                });
+            }
         }
 
-        var newAbsensi = await absensi.createMany({
-            data: arrData,
-        })
+    
+        // var newAbsensi = await absensi.createMany({
+        //     data: arrData,
+        // })
         return {success: true, data: arrData}
     } catch (error) {
         console.log(error);
@@ -22,10 +48,11 @@ async function createBulk(data) {
     }
 }
 
-async function search(where, orderBy) {
+async function search(where, include, orderBy) {
     try {
         var data = await absensi.findMany({
             where,
+            include,
             orderBy
         })
         return { success: true, data: data }

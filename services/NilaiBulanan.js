@@ -58,20 +58,49 @@ async function createBulk(data) {
     try {
         var arrData = []
 
-        for (let i = 0; i < data.nilai.length; i++) {
+        for (let i = 0; i < data.nilaiBulanan.length; i++) {
             arrData.push({
                 id_bimbingan : data.id_bimbingan,
-                bulan : data.bulan,
-                tahun : data.tahun,
-                id_tujuan_pembelajaran : data.nilai[i].id_tujuan_pembelajaran,
-                nilai : data.nilai[i].nilai,
-                deskripsi : data.nilai[i].deskripsi,
+                bulan: data.bulan,
+                tahun: data.tahun,
+                id_tujuan_pembelajaran : data.nilaiBulanan[i].id_tujuan_pembelajaran,
+                nilai : data.nilaiBulanan[i].nilai,
+                deskripsi : data.nilaiBulanan[i].deskripsi,
+                createdBy: data.createdBy
             })
+
+            // Menggunakan 'findFirst' untuk mencari data berdasarkan 'id_bimbingan' dan 'tanggal'
+            const existingNilaiBulanan = await nilaiBulanan.findFirst({
+                where: {
+                    id_bimbingan: data.id_bimbingan,
+                    id_tujuan_pembelajaran: data.nilaiBulanan[i].id_tujuan_pembelajaran,
+                    bulan: data.bulan,
+                    tahun: data.tahun,
+                }
+            });
+
+            if (existingNilaiBulanan) {
+                // Jika data sudah ada, lakukan update
+                var updatedNilaiBulanan = await nilaiBulanan.update({
+                    where: {
+                        id: existingNilaiBulanan.id // Menggunakan 'id' yang telah ditemukan
+                    },
+                    data: {
+                        nilai : data.nilaiBulanan[i].nilai,
+                        deskripsi : data.nilaiBulanan[i].deskripsi,
+                    }
+                });
+            } else {
+                // Jika data belum ada, lakukan pembuatan data baru
+                var newNilaiBulanan = await nilaiBulanan.create({
+                    data: arrData[i]
+                });
+            }
         }
 
-        var newNilai = await nilaiBulanan.createMany({
-            data: arrData,
-        })
+        // var newAbsensi = await absensi.createMany({
+        //     data: arrData,
+        // })
         return {success: true, data: arrData}
     } catch (error) {
         console.log(error);

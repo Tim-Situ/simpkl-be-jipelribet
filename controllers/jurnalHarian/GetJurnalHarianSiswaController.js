@@ -7,6 +7,9 @@ var siswaService = require("../../services/Siswa")
 async function handler(req, res) {
     var result = new BaseResponse()
 
+    var where, select, orderBy
+    orderBy = {}
+
     if (!req.query.tanggal) {
         result.success = false
         result.message = "Parameter tanggal harus diisi..."
@@ -21,14 +24,42 @@ async function handler(req, res) {
     
     if (!dataSiswa.success) {
         result.success = false
-        result.message = "Internal Server Error"
-        result.error = "Data Siswa tidak ditemukan"
+        result.message = "Data Siswa tidak ditemukan"
         return res.status(400).json(result)
     }
+
+    select = {
+        id: true,
+        status: true,
+    }
+
+    where = {
+        id_siswa: dataSiswa.data.id
+    }
+
+    var cekKelompokBimbingan = await kelompokBimbinganService.getAll(
+        where, select, orderBy
+    )
+
+    if (cekKelompokBimbingan.data.length > 1) {
+        where = {
+            OR: [],
+            tanggal
+        }
+        
+        cekKelompokBimbingan.data.forEach(data => {
+            where.OR.push({ id_bimbingan: data.id });
+        });
+    } else {
+        where = {
+            id_bimbingan : cekKelompokBimbingan.data[0].id,
+            tanggal
+        }
+    }
     
-    var jurnalHarian = await jurnalHarianService.findOne({
-        tanggal
-    })
+    var jurnalHarian = await jurnalHarianService.findOne(
+        where
+    )
 
     if (!jurnalHarian.success) {
         result.success = true
