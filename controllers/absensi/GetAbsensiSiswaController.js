@@ -72,6 +72,7 @@ async function handler(req, res) {
         //     },
         // },
         where,
+        {},
         {
             tanggal: 'asc',
         }
