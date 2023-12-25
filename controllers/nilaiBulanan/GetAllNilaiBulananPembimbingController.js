@@ -1,6 +1,7 @@
 const BaseResponse = require("../../dto/BaseResponse")
 
 var nilaiBulananService = require("../../services/NilaiBulanan")
+var tujuanPembelajaranService = require("../../services/TujuanPembelajaran")
 var guruPembimbingService = require("../../services/GuruPembimbing")
 var kelompokBimbinganService = require("../../services/KelompokBimbingan")
 
@@ -73,8 +74,25 @@ async function handler(req, res) {
     )
 
     if (nilaiBulanan.success && nilaiBulanan.data.length === 0) {
+
+        var dataNilaiAwal = []
+        
+        var tujuanPembelajaran = await tujuanPembelajaranService.getAll()
+
+        tujuanPembelajaran.data.forEach(data => {
+            dataNilaiAwal.push({
+                id_tujuan_pembelajaran: data.id,
+                id_bimbingan: cekBimbingan.data.id,
+                bulan,
+                tahun,
+                nilai: 0,
+                deskripsi: data.deskripsi,
+                tujuanPembelajaran: data
+            })
+        });
+
         result.message = "Data nilai bulanan masih kosong..."
-        result.data = nilaiBulanan.data
+        result.data = dataNilaiAwal
         return res.status(404).json(result)
     }
     
