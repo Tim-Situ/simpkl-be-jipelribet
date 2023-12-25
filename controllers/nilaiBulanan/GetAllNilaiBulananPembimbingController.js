@@ -93,7 +93,7 @@ async function handler(req, res) {
 
         result.message = "Data nilai bulanan masih kosong..."
         result.data = dataNilaiAwal
-        return res.status(404).json(result)
+        return res.status(200).json(result)
     }
     
     if (nilaiBulanan.success && nilaiBulanan.data.length > 0) {
