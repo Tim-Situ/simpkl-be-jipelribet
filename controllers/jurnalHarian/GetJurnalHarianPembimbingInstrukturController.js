@@ -27,6 +27,16 @@ async function handler(req, res) {
             // status: true
         }
 
+        include = {
+            kelompok_bimbingan: {
+                include: {
+                    siswa: true,
+                    perusahaan: true,
+                    instruktur: true
+                }
+            }
+        }
+
     } else if (req.role === "INSTRUKTUR") {
         var cekInstruktur = await instrukturService.findOne({
             username: req.username
@@ -35,6 +45,16 @@ async function handler(req, res) {
         where = {
             id_instruktur: cekInstruktur.data.id,
             // status: true
+        }
+
+        include = {
+            kelompok_bimbingan: {
+                include: {
+                    siswa: true,
+                    perusahaan: true,
+                    guru_pembimbing: true
+                }
+            }
         }
     }
 
@@ -60,15 +80,7 @@ async function handler(req, res) {
             where.AND[0].OR.push({ id_bimbingan: data.id });
         });
 
-        include = {
-            kelompok_bimbingan: {
-                include: {
-                    siswa: true,
-                    perusahaan: true,
-                    instruktur: true
-                }
-            }
-        }
+        
     } else if(dataKelompokBimbingan.data.length == 1){
         where = {
             AND: [
@@ -77,15 +89,7 @@ async function handler(req, res) {
             ]
         }
 
-        include = {
-            kelompok_bimbingan: {
-                include: {
-                    siswa: true,
-                    perusahaan: true,
-                    guru_pembimbing: true
-                }
-            }
-        }
+        
     }else{
         result.success = true
         result.message = "Kelompok bimbingan yang aktif tidak tersedia..."

@@ -8,7 +8,7 @@ async function handler(req, res) {
     
     var schema = Joi.object({
         judul : Joi.string().required(),
-        kode : Joi.string().uppercase().length(1).required(),
+        kelompok_penilaian : Joi.string().required(),
     })
 
     var { error, value } = schema.validate(req.body)
@@ -20,11 +20,11 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    var { judul, kode } = value
+    var { judul, kelompok_penilaian } = value
 
     var newAspekPenilaian = await aspekPenilaianService.createNew({
         judul,
-        kode,
+        kelompok_penilaian,
         createdBy: req.username
     })
 

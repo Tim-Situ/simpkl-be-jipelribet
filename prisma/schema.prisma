@@ -230,7 +230,8 @@ model AspekPenilaian{
   id                  String    @id @default(uuid())
   // id_kategori_nilai   String    
   judul               String    @db.VarChar(100)
-  kode                String    @db.Char(1)
+  kode                String?    @db.Char(1)
+  kelompok_penilaian  String    @db.VarChar(100)
 
   createdBy           String?
   updatedBy           String?
