@@ -87,7 +87,7 @@ async function handler(req, res) {
                 tahun,
                 nilai: 0,
                 deskripsi: data.deskripsi,
-                tujuanPembelajaran: data
+                tujuan_pembelajaran: data
             })
         });
 

@@ -43,7 +43,7 @@ async function handler(req, res) {
     } else {
         var where = {
             AND: [
-                { id_bimbingan: cekKelompokBimbingan.data.id },
+                { id_bimbingan: cekKelompokBimbingan.data[0].id },
                 { bulan: bulan },
                 { tahun: tahun },
             ]
@@ -51,10 +51,14 @@ async function handler(req, res) {
     }
 
     var orderBy = { id_tujuan_pembelajaran : 'asc' }
+    var include = {
+        tujuan_pembelajaran: true
+    }
 
     var nilaiBulanan = await nilaiBulananService.getAll(
         where,
-        orderBy
+        orderBy,
+        include
     )
 
     if (nilaiBulanan.success && nilaiBulanan.data.length === 0) {
