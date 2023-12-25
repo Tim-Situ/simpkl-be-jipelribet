@@ -282,7 +282,7 @@ model NilaiBulanan{
 
 model TujuanPembelajaran{
   id                        String    @id @default(uuid())
-  judul                     String    @db.VarChar(100)
+  judul                     String    @db.Text
   deskripsi                 String    @db.Text
 
   createdBy                 String?
