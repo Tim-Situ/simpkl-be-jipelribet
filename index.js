@@ -38,6 +38,6 @@ app.use("/jurnal-harian", require("./routes/JurnalHarian"));
 app.use("/aspek-penilaian", require("./routes/AspekPenilaian"));
 app.use("/absensi", require("./routes/Absensi"));
 
-app.listen(process.env.APP_PORT, () => {
+app.listen(process.env.PORT, () => {
   console.log("Server up and running...");
 });
