@@ -11,7 +11,7 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin: process.env.ORIGIN.split(", "),
+    origin: ["http://localhost:3000", "https://simpkl.haululazkiyaa.id"],
   })
 );
 app.use(express.json());
