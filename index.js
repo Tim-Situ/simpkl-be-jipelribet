@@ -23,6 +23,10 @@ app.use(
 );
 
 // Route
+app.use("/",(req, res) => {
+  res.send("Welcome to SIMPKL API!");
+});
+
 app.use("/auth", require("./routes/Auth"));
 app.use("/tes", require("./routes/Tes"));
 app.use("/tahun-ajaran", require("./routes/TahunAjaran"));
