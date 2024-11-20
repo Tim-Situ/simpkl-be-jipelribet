@@ -3,11 +3,13 @@ CREATE TABLE `user` (
     `id` VARCHAR(191) NOT NULL,
     `username` VARCHAR(50) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
+    `temp_password` VARCHAR(191) NULL,
     `role` ENUM('Admin Sekolah', 'Pembimbing', 'Siswa', 'Instruktur', 'Perusahaan', 'Orang Tua') NOT NULL,
+    `refresh_token` TEXT NULL,
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `user_username_key`(`username`),
     PRIMARY KEY (`id`)
@@ -22,8 +24,8 @@ CREATE TABLE `admin_sekolah` (
     `no_hp` VARCHAR(20) NOT NULL,
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `admin_sekolah_username_key`(`username`),
     PRIMARY KEY (`id`)
@@ -40,10 +42,11 @@ CREATE TABLE `siswa` (
     `no_hp` VARCHAR(20) NOT NULL,
     `tempat_lahir` VARCHAR(100) NOT NULL,
     `tanggal_lahir` DATE NOT NULL,
+    `status_aktif` BOOLEAN NOT NULL DEFAULT true,
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `siswa_nisn_key`(`nisn`),
     PRIMARY KEY (`id`)
@@ -56,10 +59,11 @@ CREATE TABLE `guru_pembimbing` (
     `nama` VARCHAR(100) NOT NULL,
     `alamat` TEXT NOT NULL,
     `no_hp` VARCHAR(25) NOT NULL,
+    `status_aktif` BOOLEAN NOT NULL DEFAULT true,
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `guru_pembimbing_nip_key`(`nip`),
     PRIMARY KEY (`id`)
@@ -75,8 +79,8 @@ CREATE TABLE `instruktur` (
     `status_aktif` BOOLEAN NOT NULL DEFAULT true,
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `instruktur_username_key`(`username`),
     PRIMARY KEY (`id`)
@@ -92,10 +96,11 @@ CREATE TABLE `perusahaan` (
     `no_hp` VARCHAR(25) NOT NULL,
     `email` VARCHAR(191) NULL,
     `website` VARCHAR(191) NULL,
+    `status` ENUM('Aktif', 'Non Aktif', 'Pending', 'Reject') NOT NULL DEFAULT 'Pending',
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `perusahaan_username_key`(`username`),
     PRIMARY KEY (`id`)
@@ -109,8 +114,8 @@ CREATE TABLE `jurusan` (
     `kompetensi_keahlian` VARCHAR(225) NOT NULL,
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -120,14 +125,14 @@ CREATE TABLE `kelompok_bimbingan` (
     `id` VARCHAR(191) NOT NULL,
     `id_siswa` VARCHAR(191) NOT NULL,
     `id_guru_pembimbing` VARCHAR(191) NOT NULL,
-    `id_instruktur` VARCHAR(191) NOT NULL,
+    `id_instruktur` VARCHAR(191) NULL,
     `id_perusahaan` VARCHAR(191) NOT NULL,
     `id_tahun_ajaran` VARCHAR(191) NOT NULL,
     `status` BOOLEAN NOT NULL DEFAULT true,
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -141,8 +146,8 @@ CREATE TABLE `nilai_akhir` (
     `keterangan` TEXT NOT NULL,
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -150,25 +155,13 @@ CREATE TABLE `nilai_akhir` (
 -- CreateTable
 CREATE TABLE `aspek_penilaian` (
     `id` VARCHAR(191) NOT NULL,
-    `id_kategori_nilai` VARCHAR(191) NOT NULL,
     `judul` VARCHAR(100) NOT NULL,
+    `kode` CHAR(1) NULL,
+    `kelompok_penilaian` VARCHAR(100) NOT NULL,
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `kategori_nilai` (
-    `id` VARCHAR(191) NOT NULL,
-    `kode` VARCHAR(191) NOT NULL,
-    `judul` VARCHAR(100) NOT NULL,
-    `createdBy` VARCHAR(191) NULL,
-    `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -184,8 +177,8 @@ CREATE TABLE `nilai_bulanan` (
     `deskripsi` TEXT NOT NULL,
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -193,12 +186,12 @@ CREATE TABLE `nilai_bulanan` (
 -- CreateTable
 CREATE TABLE `tujuan_pembelajaran` (
     `id` VARCHAR(191) NOT NULL,
-    `judul` VARCHAR(100) NOT NULL,
+    `judul` TEXT NOT NULL,
     `deskripsi` TEXT NOT NULL,
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -207,11 +200,11 @@ CREATE TABLE `tujuan_pembelajaran` (
 CREATE TABLE `tahun_ajaran` (
     `id` VARCHAR(191) NOT NULL,
     `tahun_ajaran` VARCHAR(100) NOT NULL,
-    `status` TEXT NOT NULL,
+    `status` BOOLEAN NOT NULL DEFAULT false,
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -233,8 +226,8 @@ CREATE TABLE `jurnal_harian` (
     `catatan_pembimbing` TEXT NULL,
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -252,8 +245,8 @@ CREATE TABLE `jurnal_bulanan` (
     `catatan_pembimbing` TEXT NULL,
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -267,7 +260,7 @@ CREATE TABLE `absensi` (
     `createdBy` VARCHAR(191) NULL,
     `updatedBy` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -300,7 +293,7 @@ ALTER TABLE `kelompok_bimbingan` ADD CONSTRAINT `kelompok_bimbingan_id_siswa_fke
 ALTER TABLE `kelompok_bimbingan` ADD CONSTRAINT `kelompok_bimbingan_id_guru_pembimbing_fkey` FOREIGN KEY (`id_guru_pembimbing`) REFERENCES `guru_pembimbing`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `kelompok_bimbingan` ADD CONSTRAINT `kelompok_bimbingan_id_instruktur_fkey` FOREIGN KEY (`id_instruktur`) REFERENCES `instruktur`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `kelompok_bimbingan` ADD CONSTRAINT `kelompok_bimbingan_id_instruktur_fkey` FOREIGN KEY (`id_instruktur`) REFERENCES `instruktur`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `kelompok_bimbingan` ADD CONSTRAINT `kelompok_bimbingan_id_perusahaan_fkey` FOREIGN KEY (`id_perusahaan`) REFERENCES `perusahaan`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -313,9 +306,6 @@ ALTER TABLE `nilai_akhir` ADD CONSTRAINT `nilai_akhir_id_siswa_fkey` FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE `nilai_akhir` ADD CONSTRAINT `nilai_akhir_id_aspek_penilaian_fkey` FOREIGN KEY (`id_aspek_penilaian`) REFERENCES `aspek_penilaian`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `aspek_penilaian` ADD CONSTRAINT `aspek_penilaian_id_kategori_nilai_fkey` FOREIGN KEY (`id_kategori_nilai`) REFERENCES `kategori_nilai`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `nilai_bulanan` ADD CONSTRAINT `nilai_bulanan_id_bimbingan_fkey` FOREIGN KEY (`id_bimbingan`) REFERENCES `kelompok_bimbingan`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
