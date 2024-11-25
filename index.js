@@ -12,6 +12,8 @@ app.use(
   cors({
     credentials: true,
     origin: ["http://localhost:3000", "https://simpkl.haululazkiyaa.id"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(express.json());
