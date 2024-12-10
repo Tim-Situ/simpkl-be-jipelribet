@@ -51,11 +51,11 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    if (!req.file) {
-        result.success = false
-        result.message = "Foto kegiatan tidak boleh kosong..."
-        return res.status(400).json(result)
-    }
+    // if (!req.file) {
+    //     result.success = false
+    //     result.message = "Foto kegiatan tidak boleh kosong..."
+    //     return res.status(400).json(result)
+    // }
 
     var dataSiswa = await siswaService.findOne({
         nisn: req.username
@@ -80,19 +80,19 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    var cekJurnalHarian = await jurnalHarianService.findOne({
-        tanggal,
-        id_bimbingan: dataKelompokBimbingan.data.id
-    })
+    // var cekJurnalHarian = await jurnalHarianService.findOne({
+    //     tanggal,
+    //     id_bimbingan: dataKelompokBimbingan.data.id
+    // })
 
-    if (cekJurnalHarian.success) {
-        result.success = false
-        result.message = "Jurnal pada hari ini sudah ada..."
-        return res.status(400).json(result)
-    }
+    // if (cekJurnalHarian.success) {
+    //     result.success = false
+    //     result.message = "Jurnal pada hari ini sudah ada..."
+    //     return res.status(400).json(result)
+    // }
 
     try {
-        const fotoUrl = await uploadFile.uploadImageToS3(req.file, req.username);
+        // const fotoUrl = await uploadFile.uploadImageToS3(req.file, req.username);
     
         var newData = await jurnalHarianService.createNew({
             id_bimbingan: dataKelompokBimbingan.data.id,
@@ -104,7 +104,7 @@ async function handler(req, res) {
             jam_mulai : startTime,
             jam_selesai : endTime, 
             staf,
-            foto : fotoUrl,
+            foto : "https://smb.telkomuniversity.ac.id/wp-content/uploads/2024/03/5-Fasilitas-Unggulan-Telkom-University-PTS-Nomor-1-di-Indonesia.jpg",
             createdBy: req.username
         })
     
