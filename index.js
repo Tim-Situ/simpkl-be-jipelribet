@@ -41,6 +41,7 @@ app.use("/instruktur", require("./routes/Instruktur"));
 app.use("/kelompok-bimbingan", require("./routes/KelompokBimbingan"));
 app.use("/tujuan-pembelajaran", require("./routes/TujuanPembelajaran"));
 app.use("/nilai-bulanan", require("./routes/NilaiBulanan"));
+app.use("/nilai-akhir", require("./routes/NilaiAkhir"));
 app.use("/jurnal-harian", require("./routes/JurnalHarian"));
 app.use("/aspek-penilaian", require("./routes/AspekPenilaian"));
 app.use("/absensi", require("./routes/Absensi"));
