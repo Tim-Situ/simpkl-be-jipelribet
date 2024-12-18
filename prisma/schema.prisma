@@ -34,6 +34,12 @@ enum EnumStatusPerusahaan {
   REJECT    @map("Reject")
 }
 
+enum EnumStatusJurnal {
+  MENUNGGU      @map("Menunggu")
+  DITOLAK   @map("Ditolak")
+  DITERIMA    @map("Diterima")
+}
+
 model User{
   id            String    @id @default(uuid())
   username      String    @db.VarChar(50) @unique
@@ -311,19 +317,20 @@ model TahunAjaran{
 }
 
 model JurnalHarian{
-  id                    String    @id @default(uuid())
+  id                    String            @id @default(uuid())
   id_bimbingan          String    
-  hari                  String    @db.VarChar(10)
-  tanggal               DateTime  @db.Date
-  jenis_pekerjaan       String?   @db.Text
-  deskripsi_pekerjaan   String    @db.Text
-  bentuk_kegiatan       String?   @db.Text
-  jam_mulai             DateTime  @db.Time()
-  jam_selesai           DateTime  @db.Time()
-  staf                  String    @db.VarChar(100)
-  foto                  String    @db.Text
-  catatan_instruktur    String?   @db.Text
-  catatan_pembimbing    String?   @db.Text
+  hari                  String            @db.VarChar(10)
+  tanggal               DateTime          @db.Date
+  jenis_pekerjaan       String?           @db.Text
+  deskripsi_pekerjaan   String            @db.Text
+  bentuk_kegiatan       String?           @db.Text
+  jam_mulai             DateTime           @db.Time()
+  jam_selesai           DateTime           @db.Time()
+  staf                  String             @db.VarChar(100)
+  foto                  String             @db.Text
+  catatan_instruktur    String?            @db.Text
+  catatan_pembimbing    String?            @db.Text
+  status                EnumStatusJurnal?   @default(MENUNGGU)
 
   createdBy             String?
   updatedBy             String?
