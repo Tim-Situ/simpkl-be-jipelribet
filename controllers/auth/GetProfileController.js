@@ -1,4 +1,7 @@
 var userService = require("../../services/Users")
+var kelompokBimbinganService = require("../../services/KelompokBimbingan")
+var guruPembimbingService = require("../../services/GuruPembimbing")
+var perusahaanService = require("../../services/Perusahaan")
 const BaseResponse = require("../../dto/BaseResponse")
 const { ADMINSEKOLAH, INSTRUKTUR, PEMBIMBING, PERUSAHAAN, SISWA } = require("../../utils/constants")
 
@@ -32,7 +35,7 @@ async function handler(req, res) {
                     no_hp: true,
 
                 }
-            }
+            },
         }
 
     }else if(req.role == PEMBIMBING){
@@ -69,6 +72,32 @@ async function handler(req, res) {
                             bidang_keahlian: true,
                             program_keahlian: true,
                             kompetensi_keahlian: true,
+                        }
+                    },
+                    kelompok_bimbingan: {
+                        where: {
+                            status: true
+                        },
+                        select: {
+                            guru_pembimbing: {
+                                select: {
+                                    nip: true,
+                                    nama: true,
+                                    alamat: true,
+                                    no_hp: true,
+                                    status_aktif: true
+                                }
+                            },
+                            perusahaan: {
+                                select: {
+                                    nama_perusahaan: true,
+                                    pimpinan: true,
+                                    alamat: true,
+                                    no_hp: true,
+                                    email: true,
+                                    website: true
+                                }
+                            }
                         }
                     }
                 }
@@ -123,6 +152,9 @@ async function handler(req, res) {
             data.dataPengguna = profileUser.data.dataGuruPembimbing
         } else if (profileUser.data.role == SISWA) {
             data.dataPengguna = profileUser.data.dataSiswa
+
+            // var kelompokBimbingan = await kelompok
+
         } else if (profileUser.data.role == INSTRUKTUR) {
             data.dataPengguna = profileUser.data.dataInstruktur
         } else if (profileUser.data.role == PERUSAHAAN) {
