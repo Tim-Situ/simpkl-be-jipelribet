@@ -7,6 +7,24 @@ var jurnalHarianService = require("../../services/JurnalHarian")
 var siswaService = require("../../services/Siswa")
 var kelompokBimbinganService = require("../../services/KelompokBimbingan")
 
+const { BlobServiceClient } = require("@azure/storage-blob");
+const path = require("path");
+const dotenv = require("dotenv");
+
+dotenv.config();
+
+// Konfigurasi Azure Blob Storage
+const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
+const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME;
+
+if (!connectionString || !containerName) {
+    console.error("Azure Storage connection string or container name is missing in .env file");
+    process.exit(1);
+}
+
+const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
+const containerClient = blobServiceClient.getContainerClient(containerName);
+
 async function handler(req, res) {
     var result = new BaseResponse()
 
@@ -57,10 +75,7 @@ async function handler(req, res) {
 
     try {
         const url = cekJurnalHarian.data.foto
-        const lastSlashIndex = url.lastIndexOf('/');
-        const fileName2 = url.substring(lastSlashIndex + 1);
-
-        const deleteFile = await uploadFile.deleteImageFromS3(req.username, fileName2)
+        const message = await uploadFile.deleteImageFromAzure(url);
     } catch (error) {
         result.success = false
         result.message = "Terjadi kesalahan saat delete foto"

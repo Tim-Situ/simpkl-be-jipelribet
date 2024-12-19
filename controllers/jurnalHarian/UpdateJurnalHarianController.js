@@ -78,7 +78,7 @@ async function handler (req, res) {
 
     if(req.file) {
         try {
-            const fotoUrl = await uploadFile.uploadImageToS3(req.file, req.username);
+            const fotoUrl = await uploadFile.uploadImageToAzure(req.file);
         
             var updateFoto = await jurnalHarianService.updateData(
                 id,
@@ -94,10 +94,9 @@ async function handler (req, res) {
             }
 
             const url = cekJurnalHarian.data.foto
-            const lastSlashIndex = url.lastIndexOf('/');
-            const fileName2 = url.substring(lastSlashIndex + 1);
+            console.log(url)
 
-            const deleteFile = await uploadFile.deleteImageFromS3(req.username, fileName2)
+            const deleteFile = await uploadFile.deleteImageFromAzure(url)
     
         } catch (error) {
             result.success = false
@@ -115,6 +114,7 @@ async function handler (req, res) {
             jam_mulai : startTime,
             jam_selesai : endTime, 
             staf,
+            status: "MENUNGGU",
             updatedBy: req.username
         }
     )
