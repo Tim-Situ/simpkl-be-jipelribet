@@ -9,26 +9,6 @@ var siswaService = require("../../services/Siswa")
 
 const moment = require('moment-timezone');
 
-// =====
-
-const { BlobServiceClient } = require("@azure/storage-blob");
-const path = require("path");
-const dotenv = require("dotenv");
-
-dotenv.config();
-
-// Konfigurasi Azure Blob Storage
-const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
-const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME;
-
-if (!connectionString || !containerName) {
-    console.error("Azure Storage connection string or container name is missing in .env file");
-    process.exit(1);
-}
-
-const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
-const containerClient = blobServiceClient.getContainerClient(containerName);
-
 async function handler(req, res) {
     var result = new BaseResponse()
 
@@ -71,11 +51,11 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    if (!req.file) {
-        result.success = false
-        result.message = "Foto kegiatan tidak boleh kosong..."
-        return res.status(400).json(result)
-    }
+    // if (!req.file) {
+    //     result.success = false
+    //     result.message = "Foto kegiatan tidak boleh kosong..."
+    //     return res.status(400).json(result)
+    // }
 
     var dataSiswa = await siswaService.findOne({
         nisn: req.username
@@ -112,16 +92,7 @@ async function handler(req, res) {
     // }
 
     try {
-        // Ambil buffer file
-        const fileBuffer = req.file.buffer;
-        const originalName = req.file.originalname;
-        const blobName = `${Math.floor(Date.now() / 1000)}-${path.basename(originalName)}`;
-        const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-
-        // Upload file ke Azure Blob menggunakan buffer
-        await blockBlobClient.uploadData(fileBuffer, {
-            blobHTTPHeaders: { blobContentType: req.file.mimetype }, // Menentukan content type
-        });
+        // const fotoUrl = await uploadFile.uploadImageToS3(req.file, req.username);
     
         var newData = await jurnalHarianService.createNew({
             id_bimbingan: dataKelompokBimbingan.data.id,
@@ -133,7 +104,7 @@ async function handler(req, res) {
             jam_mulai : startTime,
             jam_selesai : endTime, 
             staf,
-            foto : blockBlobClient.url,
+            foto : "https://smb.telkomuniversity.ac.id/wp-content/uploads/2024/03/5-Fasilitas-Unggulan-Telkom-University-PTS-Nomor-1-di-Indonesia.jpg",
             createdBy: req.username
         })
     
@@ -150,7 +121,6 @@ async function handler(req, res) {
     } catch (error) {
         result.success = false
         result.message = "Terjadi kesalahan saat upload foto"
-        result.data = error.message;
         return res.status(500).json(result)
     }
 }

@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/haululazkiyaa/tplum-api#readme",
   "dependencies": {
+    "@azure/storage-blob": "^12.26.0",
     "@prisma/client": "^5.6.0",
     "aws-sdk": "^2.1489.0",
     "bcrypt": "^5.1.1",
