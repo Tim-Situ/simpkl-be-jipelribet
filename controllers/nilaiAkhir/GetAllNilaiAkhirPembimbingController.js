@@ -4,9 +4,18 @@ var nilaiAkhirService = require("../../services/NilaiAkhir");
 var aspekPenilaianService = require("../../services/AspekPenilaian");
 var guruPembimbingService = require("../../services/GuruPembimbing");
 var kelompokBimbinganService = require("../../services/KelompokBimbingan");
+var siswaService = require("../../services/Siswa");
 
 async function handler(req, res) {
   var result = new BaseResponse();
+
+  if (!req.query.id_siswa) {
+    result.success = false;
+    result.message = "Parameter siswa harus diisi...";
+    return res.status(400).json(result);
+  }
+
+  var id_siswa = req.query.id_siswa;
 
   var dataPembimbing = await guruPembimbingService.findOne({
     nip: req.username,
@@ -18,65 +27,64 @@ async function handler(req, res) {
     return res.status(500).json(result);
   }
 
-  var where = {
-    AND: [{ id_guru_pembimbing: dataPembimbing.data.id }],
-  };
-
-  var cekBimbingan = await kelompokBimbinganService.getAll({
-    id_guru_pembimbing: dataPembimbing.data.id,
-    status: true,
+  var cekSiswa = await siswaService.findOne({
+    id: id_siswa,
   });
 
-  if (!cekBimbingan.success) {
+  if (!cekSiswa.success) {
     result.success = false;
-    result.message = "Data kelompok bimbingan tidak ditemukan...";
+    result.message = "Data siswa tidak ditemukan...";
     return res.status(404).json(result);
   }
 
-  if (!cekBimbingan.data.length > 0) {
+  if (!cekSiswa.data.status_aktif) {
     result.success = false;
-    result.message = "Tidak ada kelompok bimbingan yang aktif...";
+    result.message = "Siswa sudah tidak aktif...";
     return res.status(400).json(result);
   }
 
-  filteredSiswa = [];
-  cekBimbingan.data.forEach((data) => {
-    filteredSiswa.push(data.id_siswa);
+  var cekBimbingan = await kelompokBimbinganService.findOne({
+    id_guru_pembimbing: dataPembimbing.data.id,
+    id_siswa: cekSiswa.data.id,
   });
 
+  if (cekBimbingan.data.id_guru_pembimbing != dataPembimbing.data.id) {
+    result.success = false;
+    result.message = "Anda tidak memiliki hak untuk mengakses nilai ini...";
+    return res.status(403).json(result);
+  }
+
   var where = {
-    OR: filteredSiswa.map((id) => {
-      return { id_siswa: id };
-    }),
+    AND: [{ id_siswa: cekSiswa.data.id }],
   };
 
-  var oderBy = {};
+  var orderBy = [];
 
   var include = {
     aspek_penilaian: true,
   };
 
-  var nilaiAkhir = await nilaiAkhirService.getAll(where, oderBy, include);
+  var nilaiAkhir = await nilaiAkhirService.getAll(where, orderBy, include);
 
   if (nilaiAkhir.success && nilaiAkhir.data.length === 0) {
-    var dataNilai = [];
+    var dataNilaiAwal = [];
 
-    var aspekPenilaian = await aspekPenilaianService.getAll();
+    var tujuanPembelajaran = await aspekPenilaianService.getAll();
 
-    aspekPenilaian.data.forEach((data) => {
-      if (!filteredSiswa.includes(data.id_siswa)) {
-        dataNilai.push({
-          id: data.id,
-          judul: data.judul,
-          kode: data.kode,
-          kelompok_penilaian: data.kelompok_penilaian,
-          nilai_akhir: 0,
-        });
-      }
+    tujuanPembelajaran.data.forEach((data) => {
+      dataNilaiAwal.push({
+        id_aspek_penilaian: data.id,
+        id_siswa: cekSiswa.data.id,
+        judul: data.judul,
+        kode: data.kode,
+        kelompok_penilaian: data.kelompok_penilaian,
+        deskripsi: data.deskripsi,
+        aspek_penilaian: data,
+      });
     });
 
     result.message = "Data nilai akhir masih kosong...";
-    result.data = dataNilai;
+    result.data = dataNilaiAwal;
     return res.status(200).json(result);
   }
 

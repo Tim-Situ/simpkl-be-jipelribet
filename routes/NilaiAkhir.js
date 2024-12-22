@@ -11,7 +11,7 @@ var getAllNilaiAkhirSiswaController = require("../controllers/nilaiAkhir/GetAllN
 // router.post("/create", verifyToken, checkUserRole(PEMBIMBING), createNilaiBulananController)
 // router.put("/update", verifyToken, checkUserRole(PEMBIMBING), updateNilaiBulananController)
 router.get(
-  "/pembimbing",
+  "",
   verifyToken,
   checkUserRole(PEMBIMBING),
   getAllNilaiAkhirPembimbingController
