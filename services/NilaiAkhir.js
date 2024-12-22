@@ -1,4 +1,4 @@
-var { nilaiBulanan, nilaiAkhir } = require("../prisma/dbContext")
+var { nilaiBulanan, nilaiAkhir } = require("../prisma/dbContext");
 
 // async function createNew(data){
 //     try {
@@ -12,31 +12,31 @@ var { nilaiBulanan, nilaiAkhir } = require("../prisma/dbContext")
 //     }
 // }
 
-async function getAll(where, orderBy, include){
-    try {
-        var allData = await nilaiAkhir.findMany({
-            where,
-            orderBy,
-            include
-        })
-        return {success: true, data: allData}
-    } catch (error) {
-        console.log(error)
-        return {success: false, data: []}
-    }
+async function getAll(where, orderBy, include) {
+  try {
+    var allData = await nilaiAkhir.findMany({
+      where,
+      orderBy,
+      include,
+    });
+    return { success: true, data: allData };
+  } catch (error) {
+    console.log(error);
+    return { success: false, data: [] };
+  }
 }
 
-// async function findOne(where){
-//     try {
-//         var data = await nilaiBulanan.findFirstOrThrow({
-//             where
-//         })
+async function findOne(where) {
+  try {
+    var data = await nilaiBulanan.findFirstOrThrow({
+      where,
+    });
 
-//         return {success: true, data: data}
-//     } catch (error) {
-//         return {success: false, data: error}
-//     }
-// }
+    return { success: true, data: data };
+  } catch (error) {
+    return { success: false, data: error };
+  }
+}
 
 // async function updateData(id, data) {
 //     try {
@@ -109,9 +109,9 @@ async function getAll(where, orderBy, include){
 // }
 
 module.exports = {
-    // createNew,
-    getAll,
-    // findOne,
-    // updateData,
-    // createBulk
-}
+  // createNew,
+  getAll,
+  findOne,
+  // updateData,
+  // createBulk
+};
