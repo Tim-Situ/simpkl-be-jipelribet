@@ -80,7 +80,6 @@ async function handler(req, res) {
         nilai: 0,
         keterangan: "Belum ada keterangan",
         kelompok_penilaian: data.kelompok_penilaian,
-        deskripsi: data.deskripsi,
         aspek_penilaian: data,
       });
     });

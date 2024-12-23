@@ -62,9 +62,16 @@ async function createBulk(data) {
       arrData.push({
         id_siswa: data.id_siswa,
         id_aspek_penilaian: data.nilaiAkhir[i].id_aspek_penilaian,
+        judul: data.judul,
+        kode: data.kode,
         nilai: data.nilaiAkhir[i].nilai,
         keterangan: data.nilaiAkhir[i].keterangan,
         createdBy: data.createdBy,
+        aspek_penilaian: {
+          connect: {
+            id: data.nilaiAkhir[i].id_aspek_penilaian,
+          },
+        },
       });
 
       // Menggunakan 'findFirst' untuk mencari data berdasarkan 'id_siswa'
