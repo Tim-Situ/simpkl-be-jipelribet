@@ -1,8 +1,8 @@
-var { nilaiBulanan, nilaiAkhir } = require("../prisma/dbContext")
+var { nilaiAkhir } = require("../prisma/dbContext");
 
 // async function createNew(data){
 //     try {
-//         var newData = await nilaiBulanan.create({
+//         var newData = await nilaiAkhir.create({
 //             data
 //         })
 //         return {success: true, data: newData}
@@ -12,35 +12,35 @@ var { nilaiBulanan, nilaiAkhir } = require("../prisma/dbContext")
 //     }
 // }
 
-async function getAll(where, orderBy, include){
-    try {
-        var allData = await nilaiAkhir.findMany({
-            where,
-            orderBy,
-            include
-        })
-        return {success: true, data: allData}
-    } catch (error) {
-        console.log(error)
-        return {success: false, data: []}
-    }
+async function getAll(where, orderBy, include) {
+  try {
+    var allData = await nilaiAkhir.findMany({
+      where,
+      orderBy,
+      include,
+    });
+    return { success: true, data: allData };
+  } catch (error) {
+    console.log(error);
+    return { success: false, data: [] };
+  }
 }
 
-// async function findOne(where){
-//     try {
-//         var data = await nilaiBulanan.findFirstOrThrow({
-//             where
-//         })
+async function findOne(where) {
+  try {
+    var data = await nilaiAkhir.findFirstOrThrow({
+      where,
+    });
 
-//         return {success: true, data: data}
-//     } catch (error) {
-//         return {success: false, data: error}
-//     }
-// }
+    return { success: true, data: data };
+  } catch (error) {
+    return { success: false, data: error };
+  }
+}
 
 // async function updateData(id, data) {
 //     try {
-//         var dataUpdated = await nilaiBulanan.update({
+//         var dataUpdated = await nilaiAkhir.update({
 //             where: {
 //                 id
 //             },
@@ -54,64 +54,62 @@ async function getAll(where, orderBy, include){
 //     }
 // }
 
-// async function createBulk(data) {
-//     try {
-//         var arrData = []
+async function createBulk(data) {
+  try {
+    var arrData = [];
 
-//         for (let i = 0; i < data.nilaiBulanan.length; i++) {
-//             arrData.push({
-//                 id_bimbingan : data.id_bimbingan,
-//                 bulan: data.bulan,
-//                 tahun: data.tahun,
-//                 id_tujuan_pembelajaran : data.nilaiBulanan[i].id_tujuan_pembelajaran,
-//                 nilai : data.nilaiBulanan[i].nilai,
-//                 deskripsi : data.nilaiBulanan[i].deskripsi,
-//                 createdBy: data.createdBy
-//             })
+    for (let i = 0; i < data.nilaiAkhir.length; i++) {
+      arrData.push({
+        id_siswa: data.id_siswa,
+        id_aspek_penilaian: data.nilaiAkhir[i].id_aspek_penilaian,
+        judul: data.judul,
+        kode: data.kode,
+        nilai: data.nilaiAkhir[i].nilai,
+        keterangan: data.nilaiAkhir[i].keterangan,
+        createdBy: data.createdBy,
+      });
 
-//             // Menggunakan 'findFirst' untuk mencari data berdasarkan 'id_bimbingan' dan 'tanggal'
-//             const existingNilaiBulanan = await nilaiBulanan.findFirst({
-//                 where: {
-//                     id_bimbingan: data.id_bimbingan,
-//                     id_tujuan_pembelajaran: data.nilaiBulanan[i].id_tujuan_pembelajaran,
-//                     bulan: data.bulan,
-//                     tahun: data.tahun,
-//                 }
-//             });
+      // Menggunakan 'findFirst' untuk mencari data berdasarkan 'id_siswa'
+      const existingNilaiAkhir = await nilaiAkhir.findFirst({
+        where: {
+          id_siswa: data.id_siswa,
+          id_aspek_penilaian: data.nilaiAkhir[i].id_aspek_penilaian,
+        },
+      });
 
-//             if (existingNilaiBulanan) {
-//                 // Jika data sudah ada, lakukan update
-//                 var updatedNilaiBulanan = await nilaiBulanan.update({
-//                     where: {
-//                         id: existingNilaiBulanan.id // Menggunakan 'id' yang telah ditemukan
-//                     },
-//                     data: {
-//                         nilai : data.nilaiBulanan[i].nilai,
-//                         deskripsi : data.nilaiBulanan[i].deskripsi,
-//                     }
-//                 });
-//             } else {
-//                 // Jika data belum ada, lakukan pembuatan data baru
-//                 var newNilaiBulanan = await nilaiBulanan.create({
-//                     data: arrData[i]
-//                 });
-//             }
-//         }
+      if (existingNilaiAkhir) {
+        // Jika data sudah ada, lakukan update
+        var updatedNilaiAkhir = await nilaiAkhir.update({
+          where: {
+            id: existingNilaiAkhir.id, // Menggunakan 'id' yang telah ditemukan
+          },
+          data: {
+            nilai: data.nilaiAkhir[i].nilai,
+            keterangan: data.nilaiAkhir[i].keterangan,
+          },
+        });
+      } else {
+        // Jika data belum ada, lakukan pembuatan data baru
+        var newNilaiAkhir = await nilaiAkhir.create({
+          data: arrData[i],
+        });
+      }
+    }
 
-//         // var newAbsensi = await absensi.createMany({
-//         //     data: arrData,
-//         // })
-//         return {success: true, data: arrData}
-//     } catch (error) {
-//         console.log(error);
-//         return {success: false, data: null}
-//     }
-// }
+    // var newAbsensi = await absensi.createMany({
+    //     data: arrData,
+    // })
+    return { success: true, data: arrData };
+  } catch (error) {
+    console.log(error);
+    return { success: false, data: null };
+  }
+}
 
 module.exports = {
-    // createNew,
-    getAll,
-    // findOne,
-    // updateData,
-    // createBulk
-}
+  // createNew,
+  getAll,
+  findOne,
+  // updateData,
+  createBulk,
+};

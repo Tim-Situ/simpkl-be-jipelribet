@@ -1,110 +1,101 @@
-const BaseResponse = require("../../dto/BaseResponse")
+const BaseResponse = require("../../dto/BaseResponse");
 
-var nilaiBulananService = require("../../services/NilaiBulanan")
-var tujuanPembelajaranService = require("../../services/TujuanPembelajaran")
-var guruPembimbingService = require("../../services/GuruPembimbing")
-var kelompokBimbinganService = require("../../services/KelompokBimbingan")
+var nilaiAkhirService = require("../../services/NilaiAkhir");
+var aspekPenilaianService = require("../../services/AspekPenilaian");
+var guruPembimbingService = require("../../services/GuruPembimbing");
+var kelompokBimbinganService = require("../../services/KelompokBimbingan");
+var siswaService = require("../../services/Siswa");
 
 async function handler(req, res) {
-    var result = new BaseResponse()
-    
-    if ( !req.query.id_bimbingan || !req.query.bulan || !req.query.tahun ) {
-        result.success = false
-        result.message = "Parameter bimbingan, bulan dan tahun harus diisi..."
-        return res.status(400).json(result)
-    }
-    
-    var id_bimbingan = req.query.id_bimbingan
-    var bulan = parseInt(req.query.bulan)
-    var tahun = parseInt(req.query.tahun)
+  var result = new BaseResponse();
 
-    var dataPembimbing = await guruPembimbingService.findOne({
-        nip: req.username
-    })
+  if (!req.query.id_siswa) {
+    result.success = false;
+    result.message = "Parameter siswa harus diisi...";
+    return res.status(400).json(result);
+  }
 
-    if (!dataPembimbing.success) {
-        result.success = false
-        result.message = "Terjadi kesalahan dalam sistem..."
-        return res.status(500).json(result)
-    }
+  var id_siswa = req.query.id_siswa;
 
-    var cekBimbingan = await kelompokBimbinganService.findOne({
-        id: id_bimbingan
-    })
+  var dataPembimbing = await guruPembimbingService.findOne({
+    nip: req.username,
+  });
 
-    if (!cekBimbingan.success) {
-        result.success = false
-        result.message = "Data kelompok bimbingan tidak ditemukan..."
-        return res.status(404).json(result)
-    }
+  if (!dataPembimbing.success) {
+    result.success = false;
+    result.message = "Terjadi kesalahan dalam sistem...";
+    return res.status(500).json(result);
+  }
 
-    if (cekBimbingan.data.id_guru_pembimbing != dataPembimbing.data.id) {
-        result.success = false
-        result.message = "Anda tidak memiliki hak untuk mengakses nilai ini..."
-        return res.status(403).json(result)
-    }
+  var cekSiswa = await siswaService.findOne({
+    id: id_siswa,
+  });
 
-    if (!cekBimbingan.data.status) {
-        result.success = false
-        result.message = "Kelompok bimbingan sudah tidak aktif..."
-        return res.status(400).json(result)
-    }
+  if (!cekSiswa.success) {
+    result.success = false;
+    result.message = "Data siswa tidak ditemukan...";
+    return res.status(404).json(result);
+  }
 
-    var where = {
-        AND: [
-            { id_bimbingan: cekBimbingan.data.id },
-            { bulan: bulan },
-            { tahun: tahun },
-        ]
-    }
+  if (!cekSiswa.data.status_aktif) {
+    result.success = false;
+    result.message = "Siswa sudah tidak aktif...";
+    return res.status(400).json(result);
+  }
 
-    var orderBy = [
-        { bulan: 'desc' },
-        { tahun: 'desc' }
-    ]
+  var cekBimbingan = await kelompokBimbinganService.findOne({
+    id_guru_pembimbing: dataPembimbing.data.id,
+    id_siswa: cekSiswa.data.id,
+  });
 
-    var include = {
-        tujuan_pembelajaran: true
-    }
+  if (cekBimbingan.data.id_guru_pembimbing != dataPembimbing.data.id) {
+    result.success = false;
+    result.message = "Anda tidak memiliki hak untuk mengakses nilai ini...";
+    return res.status(403).json(result);
+  }
 
-    var nilaiBulanan = await nilaiBulananService.getAll(
-        where,
-        orderBy,
-        include
-    )
+  var where = {
+    AND: [{ id_siswa: cekSiswa.data.id }],
+  };
 
-    if (nilaiBulanan.success && nilaiBulanan.data.length === 0) {
+  var orderBy = [];
 
-        var dataNilaiAwal = []
-        
-        var tujuanPembelajaran = await tujuanPembelajaranService.getAll()
+  var include = {
+    aspek_penilaian: true,
+  };
 
-        tujuanPembelajaran.data.forEach(data => {
-            dataNilaiAwal.push({
-                id_tujuan_pembelajaran: data.id,
-                id_bimbingan: cekBimbingan.data.id,
-                bulan,
-                tahun,
-                nilai: 0,
-                deskripsi: data.deskripsi,
-                tujuan_pembelajaran: data
-            })
-        });
+  var nilaiAkhir = await nilaiAkhirService.getAll(where, orderBy, include);
 
-        result.message = "Data nilai bulanan masih kosong..."
-        result.data = dataNilaiAwal
-        return res.status(200).json(result)
-    }
-    
-    if (nilaiBulanan.success && nilaiBulanan.data.length > 0) {
-        result.message = "Data nilai bulanan berhasil ditampilkan..."
-        result.data = nilaiBulanan.data
-        return res.status(200).json(result)
-    } else {
-        result.success = false
-        result.message = "Internal Server Error"
-        return res.status(500).json(result)
-    }
+  if (nilaiAkhir.success && nilaiAkhir.data.length === 0) {
+    var dataNilaiAwal = [];
+
+    var tujuanPembelajaran = await aspekPenilaianService.getAll();
+
+    tujuanPembelajaran.data.forEach((data) => {
+      dataNilaiAwal.push({
+        id_aspek_penilaian: data.id,
+        id_siswa: cekSiswa.data.id,
+        nilai: 0,
+        keterangan: "Belum ada keterangan",
+        kelompok_penilaian: data.kelompok_penilaian,
+        aspek_penilaian: data,
+      });
+    });
+
+    result.message = "Data nilai akhir masih kosong...";
+    result.data = dataNilaiAwal;
+    return res.status(200).json(result);
+  }
+
+  if (nilaiAkhir.success && nilaiAkhir.data.length > 0) {
+    result.message = "Data nilai akhir berhasil ditampilkan...";
+    result.data = nilaiAkhir.data;
+    return res.status(200).json(result);
+  } else {
+    result.success = false;
+    result.message = "Internal Server Error";
+    return res.status(500).json(result);
+  }
 }
 
-module.exports = handler
+module.exports = handler;

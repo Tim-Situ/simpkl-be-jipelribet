@@ -1,102 +1,100 @@
-const BaseResponse = require("../../dto/BaseResponse")
-var Joi = require("joi")
+const BaseResponse = require("../../dto/BaseResponse");
+var Joi = require("joi");
 
-var nilaiBulananService = require("../../services/NilaiBulanan")
-var kelompokBimbinganService = require("../../services/KelompokBimbingan")
-var tujuanPembelajaranService = require("../../services/TujuanPembelajaran")
-var guruPembimbingService = require("../../services/GuruPembimbing")
+var nilaiAkhirService = require("../../services/NilaiAkhir");
+var kelompokBimbinganService = require("../../services/KelompokBimbingan");
+var aspekPenilaianService = require("../../services/AspekPenilaian");
+var guruPembimbingService = require("../../services/GuruPembimbing");
+var siswaService = require("../../services/Siswa");
 
 async function handler(req, res) {
-    var result = new BaseResponse()
+  var result = new BaseResponse();
 
-    var schema = Joi.object({
-        id_bimbingan : Joi.string().required(),
-        bulan : Joi.number().integer().min(1).max(12).required(),
-        tahun : Joi.number().integer().min(2000).max(9999).required(),
-        data: Joi.array().items(
-            Joi.object({
-                id_tujuan_pembelajaran : Joi.string().required(),
-                nilai: Joi.number().integer().min(0).max(100).required(),
-                deskripsi: Joi.string().required()
-            })
-        ),
-    })
+  var schema = Joi.object({
+    id_siswa: Joi.string().required(),
+    data: Joi.array().items(
+      Joi.object({
+        id_aspek_penilaian: Joi.string().required(),
+        nilai: Joi.number().integer().min(0).max(100).required(),
+        keterangan: Joi.string().required(),
+      })
+    ),
+  });
 
-    var { error, value } = schema.validate(req.body)
+  var { error, value } = schema.validate(req.body);
 
-    if (error) {
-        result.success = false
-        result.message = error.message
-        result.data = error.stack
-        return res.status(400).json(result)
+  if (error) {
+    result.success = false;
+    result.message = error.message;
+    result.data = error.stack;
+    return res.status(400).json(result);
+  }
+
+  var { id_siswa, data } = value;
+  var id_guru_pembimbing;
+
+  var cekSiswa = await siswaService.findOne({
+    id: id_siswa,
+  });
+
+  if (!cekSiswa.success) {
+    result.success = false;
+    result.message = "Data siswa tidak terdaftar...";
+    return res.status(400).json(result);
+  }
+
+  for (let i = 0; i < data.length; i++) {
+    var cekAspekPenilaian = await aspekPenilaianService.findOne({
+      id: data[i].id_aspek_penilaian,
+    });
+
+    if (!cekAspekPenilaian.success) {
+      result.success = false;
+      result.message = "Salah satu data aspek penilaian tidak ditemukan...";
+      return res.status(400).json(result);
     }
+  }
 
-    var { id_bimbingan, bulan, tahun, data} = value
-    var id_guru_pembimbing
+  // Revisi: pengecekan guru pembimbing di kelompok bimbingan
+  var cekGuruPembimbing = await guruPembimbingService.findOne({
+    nip: req.username,
+  });
 
-    var cekKelompokBimbingan = await kelompokBimbinganService.findOne({
-        id: id_bimbingan
-    })
+  if (cekGuruPembimbing.success) {
+    id_guru_pembimbing = cekGuruPembimbing.data.id;
+  } else {
+    result.success = false;
+    result.message = "Terjadi kesalahan di sistem...";
+    return res.status(500).json(result);
+  }
 
-    if (!cekKelompokBimbingan.success) {
-        result.success = false
-        result.message = "Data kelompok bimbingan tidak terdaftar..."
-        return res.status(400).json(result)
-    }
+  var cekAksesGuruPembimbing = await kelompokBimbinganService.findOne({
+    id_siswa: id_siswa,
+    id_guru_pembimbing: id_guru_pembimbing,
+  });
 
-    for (let i = 0; i < data.length; i++) {
-        var cekTujuanPembelajaran = await tujuanPembelajaranService.findOne({
-            id: data[i].id_tujuan_pembelajaran
-        })
-    
-        if (!cekTujuanPembelajaran.success) {
-            result.success = false
-            result.message = "Salah satu data tujuan pembelajaran tidak ditemukan..."
-            return res.status(400).json(result)
-        }
-    }
+  if (!cekAksesGuruPembimbing.success) {
+    result.success = false;
+    result.message =
+      "Anda tidak memiliki akses untuk menambahkan nilai kelompok bimbingan ini...";
+    return res.status(403).json(result);
+  }
 
-    // Revisi: pengecekan guru pembimbing di kelompok bimbingan
-    var cekGuruPembimbing = await guruPembimbingService.findOne({
-        nip: req.username
-    })
+  var newNilaiAkhir = await nilaiAkhirService.createBulk({
+    id_siswa,
+    nilaiAkhir: data,
+    createdBy: req.username,
+  });
 
-    if (cekGuruPembimbing.success) {
-        id_guru_pembimbing = cekGuruPembimbing.data.id
-    } else {
-        result.success = false
-        result.message = "Terjadi kesalahan di sistem..."
-        return res.status(500).json(result)
-    }
-
-    var cekAksesGuruPembimbing = await kelompokBimbinganService.findOne({
-        id: id_bimbingan,
-        id_guru_pembimbing: id_guru_pembimbing
-    })
-
-    if (!cekAksesGuruPembimbing.success) {
-        result.success = false
-        result.message = "Anda tidak memiliki akses untuk menambahkan nilai kelompok bimbingan ini..."
-        return res.status(403).json(result)
-    }
-
-    var newNilaiBulanan = await nilaiBulananService.createBulk({
-        id_bimbingan,
-        bulan,
-        tahun,
-        nilaiBulanan: data,
-        createdBy: req.username,
-    })
-
-    if (newNilaiBulanan.success) {
-        result.message = "Nilai bulanan berhasil ditambahkan..."
-        result.data = newNilaiBulanan.data
-        res.status(201).json(result)
-    } else {
-        result.success = false
-        result.message = "Internal Server Error"
-        res.status(500).json(result)
-    }
+  if (newNilaiAkhir.success) {
+    result.message = "Nilai akhir berhasil ditambahkan...";
+    result.data = newNilaiAkhir.data;
+    res.status(201).json(result);
+  } else {
+    result.success = false;
+    result.message = "Internal Server Error";
+    res.status(500).json(result);
+  }
 }
 
-module.exports = handler
+module.exports = handler;
