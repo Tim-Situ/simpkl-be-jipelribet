@@ -5,6 +5,15 @@ var dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 
 dotenv.config();
+
+const admin = require("firebase-admin");
+const serviceAccount = require("./serviceAccountKey.json");
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+});
+
+
 const app = express();
 
 app.use(cookieParser());
@@ -30,6 +39,29 @@ app.get("/", (req, res) => {
   res.send("Welcome to the homepage!");
 });
 
+app.post("/send-notification", async (req, res) => {
+  const { token, title, body } = req.body;
+
+  if (!token || !title || !body) {
+      return res.status(400).send({ message: "All fields are required." });
+  }
+
+  const message = {
+      notification: {
+          title,
+          body,
+      },
+      token,
+  };
+
+  try {
+      const response = await admin.messaging().send(message);
+      res.status(200).send({ message: "Notification sent!", response });
+  } catch (error) {
+      res.status(500).send({ message: "Failed to send notification.", error });
+  }
+});
+
 app.use("/auth", require("./routes/Auth"));
 app.use("/tes", require("./routes/Tes"));
 app.use("/tahun-ajaran", require("./routes/TahunAjaran"));
@@ -48,6 +80,9 @@ app.use("/absensi", require("./routes/Absensi"));
 app.use("/banner", require("./routes/Banner"));
 app.use("/artikel", require("./routes/Artikel"));
 app.use("/pengumuman", require("./routes/Pengumuman"));
+
+
+
 
 app.listen(process.env.APP_PORT, () => {
   console.log("Server up and running: " + process.env.APP_PORT);
