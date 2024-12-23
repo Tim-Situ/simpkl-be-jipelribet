@@ -379,6 +379,47 @@ model Absensi{
   @@map("absensi")
 }
 
+model Banner{
+  id              String        @id @default(uuid())
+  gambar          String        
+  link            String        @db.Text
+
+  createdBy       String?
+  updatedBy       String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @default(now())
+
+  @@map("banner")
+}
+
+model Artikel{
+  id              String        @id @default(uuid())
+  judul           String        
+  thumbnail       String        @db.Text
+  link            String        @db.Text
+
+  createdBy       String?
+  updatedBy       String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @default(now())
+
+  @@map("artikel")
+}
+
+model Pengumuman{
+  id              String        @id @default(uuid())
+  pengumuman      String  
+  tanggal         DateTime      @db.Date
+  status          Boolean       @default(false) 
+
+  createdBy       String?
+  updatedBy       String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @default(now())
+
+  @@map("pengumuman")
+}
+
 
 
 
