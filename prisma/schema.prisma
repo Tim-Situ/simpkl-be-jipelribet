@@ -408,8 +408,7 @@ model Artikel{
 
 model Pengumuman{
   id              String        @id @default(uuid())
-  pengumuman      String  
-  tanggal         DateTime      @db.Date
+  pengumuman      String 
   status          Boolean       @default(false) 
 
   createdBy       String?

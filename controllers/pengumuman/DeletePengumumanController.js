@@ -1,7 +1,7 @@
 const BaseResponse = require("../../dto/BaseResponse")
 const Joi = require("joi")
 
-var jurusanService = require("../../services/Jurusan")
+var pengumumanService = require("../../services/Pengumuman")
 
 async function handler(req, res) {
     var result = new BaseResponse()
@@ -21,33 +21,24 @@ async function handler(req, res) {
 
     var { id } = value
 
-    var cekJurusan = await jurusanService.findOne({
+    var cekPengumuman = await pengumumanService.findOne({
         id
     })
 
-    if (!cekJurusan.success) {
+    if (!cekPengumuman.success) {
         result.success = false
-        result.message = "Data Jurusan tidak ditemukan..."
-        return res.status(404).json(result)
-    }
-
-    var cekSiswa = await siswaService.findOne({
-        id_jurusan: id
-    })
-
-    if (cekSiswa.success) {
-        result.success = false
-        result.message = "Data siswa dengan jurusan ini masih ada!!!"
+        result.message = "Data pengumuman tidak ditemukan..."
         return res.status(400).json(result)
     }
 
-    var deleteData = await jurusanService.deleteData({
+    var deletePengumuman = await pengumumanService.deleteData({
         id
     })
 
-    if (deleteData.success) {
-        result.message = "Data jurusan berhasil dihapus..."
+    if (deletePengumuman.success) {
+        result.message = "Data pengumuman berhasil dihapus..."
         return res.status(200).json(result)
+        
     } else {
         result.success = false
         result.message = "Internal Server Error"
