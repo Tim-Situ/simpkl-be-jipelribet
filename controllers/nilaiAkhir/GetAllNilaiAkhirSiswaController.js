@@ -10,12 +10,23 @@ async function handler(req, res) {
     nisn: req.username,
   });
 
+  if (!cekSiswa.success) {
+    result.success = false;
+    result.message = "Terjadi kesalahan dalam sistem...";
+    return res.status(400).json(result);
+  }
+
+  var where = {
+    AND: [{ id_siswa: cekSiswa.data.id }],
+  };
+
   var orderBy = { id: "asc" };
+
   var include = {
     aspek_penilaian: true,
   };
 
-  var nilaiAkhir = await nilaiAkhirService.getAll({}, orderBy, include);
+  var nilaiAkhir = await nilaiAkhirService.getAll(where, orderBy, include);
 
   if (nilaiAkhir.success && nilaiAkhir.data.length === 0) {
     result.message = "Data nilai akhir belum tersedia...";
