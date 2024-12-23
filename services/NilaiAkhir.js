@@ -61,7 +61,7 @@ async function createBulk(data) {
     for (let i = 0; i < data.nilaiAkhir.length; i++) {
       arrData.push({
         id_siswa: data.id_siswa,
-        id_aspek_pembelajaran: data.nilaiAkhir[i].id_aspek_pembelajaran,
+        id_aspek_penilaian: data.nilaiAkhir[i].id_aspek_penilaian,
         nilai: data.nilaiAkhir[i].nilai,
         keterangan: data.nilaiAkhir[i].keterangan,
         createdBy: data.createdBy,
@@ -71,7 +71,7 @@ async function createBulk(data) {
       const existingNilaiAkhir = await nilaiAkhir.findFirst({
         where: {
           id_siswa: data.id_siswa,
-          id_aspek_pembelajaran: data.nilaiAkhir[i].id_aspek_pembelajaran,
+          id_aspek_penilaian: data.nilaiAkhir[i].id_aspek_penilaian,
         },
       });
 
