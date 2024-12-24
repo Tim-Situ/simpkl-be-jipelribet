@@ -47,6 +47,7 @@ model User{
   temp_password String?
   role          RoleUser
   refresh_token String?   @db.Text
+  message_token String?   @db.Text
 
   createdBy     String?
   updatedBy     String?
