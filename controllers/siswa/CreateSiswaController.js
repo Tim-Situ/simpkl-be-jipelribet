@@ -87,10 +87,11 @@ async function handler(req, res) {
         nis,
         nisn,
         nama,
-        alamat ,
+        alamat,
         no_hp,
         tempat_lahir,
         tanggal_lahir,
+        foto: "https://gambarpkl.blob.core.windows.net/gambar-simpkl/1735314679-user-profile.png",
         createdBy : req.username
     })
 

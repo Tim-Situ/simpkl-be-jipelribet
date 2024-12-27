@@ -91,6 +91,7 @@ model Siswa{
   tempat_lahir    String    @db.VarChar(100)
   tanggal_lahir   DateTime  @db.Date
   status_aktif    Boolean   @default(true)
+  foto            String?   @db.Text
 
   createdBy       String?
   updatedBy       String?
@@ -113,6 +114,7 @@ model GuruPembimbing{
   alamat          String    @db.Text
   no_hp           String    @db.VarChar(25)
   status_aktif    Boolean   @default(true)
+  foto            String?   @db.Text
 
   createdBy       String?
   updatedBy       String?
@@ -157,6 +159,7 @@ model Perusahaan{
   email             String?
   website           String?
   status            EnumStatusPerusahaan @default(PENDING)
+  foto              String?   @db.Text
 
   createdBy         String?
   updatedBy         String?

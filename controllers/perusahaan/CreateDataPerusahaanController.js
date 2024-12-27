@@ -2,6 +2,7 @@ var Joi = require("joi")
 var bcrypt = require("bcrypt")
 
 const BaseResponse = require("../../dto/BaseResponse")
+var uploadFile = require("../../dto/ManageFile")
 var dataCons = require("../../utils/constants")
 var randomPassword = require("../../middleware/GenerateRandomPassword")
 
@@ -67,6 +68,13 @@ async function handler(req, res) {
         return res.status(500).json(result)
     }
 
+    var fileUrl = "https://gambarpkl.blob.core.windows.net/gambar-simpkl/1735315070-image-not-found.jpg";
+
+    if (req.file) {
+        const file = req.file;
+        fileUrl = await uploadFile.uploadImageToAzure(file)
+    }
+
     var newPerusahaan = await perusahaanService.registrasi({
         username,
         nama_perusahaan,
@@ -76,6 +84,7 @@ async function handler(req, res) {
         email,
         website,
         status: dataCons.AKTIF,
+        foto: fileUrl,
         createdBy : req.username
     })
 

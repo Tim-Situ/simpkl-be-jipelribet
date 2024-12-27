@@ -69,6 +69,7 @@ async function handler(req, res) {
         nama,
         alamat,
         no_hp,
+        foto: "https://gambarpkl.blob.core.windows.net/gambar-simpkl/1735314679-user-profile.png",
         createdBy : req.username
     })
 
