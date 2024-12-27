@@ -53,6 +53,23 @@ async function handler(req, res) {
         }
     }
 
+    var foto = dataPerusahaan.data.foto;
+
+    if(req.file) {
+        try {
+            foto = await uploadFile.uploadImageToAzure(req.file);
+
+            const url = dataPerusahaan.data.foto
+
+            const deleteFile = await uploadFile.deleteImageFromAzure(url)
+    
+        } catch (error) {
+            result.success = false
+            result.message = "Terjadi kesalahan saat upload foto"
+            return res.status(500).json(result)
+        }
+    }
+
     var updateUser = await userService.updateUser(
         { username : dataPerusahaan.data.username},
         {
@@ -78,6 +95,7 @@ async function handler(req, res) {
             email,
             website,
             status,
+            foto,
             updatedBy : req.username
         }
     )

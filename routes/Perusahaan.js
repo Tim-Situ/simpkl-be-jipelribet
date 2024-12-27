@@ -16,6 +16,6 @@ router.post("/registrasi", registrasiPerusahaanController)
 router.post("/create", verifyToken, checkUserRole(ADMINSEKOLAH), upload.single('foto'), createPerusahaanController)
 router.get("/all", verifyToken, checkUserRole(ADMINSEKOLAH), getAllPerusahaanController)
 router.put("/update-profile", verifyToken, checkUserRole(PERUSAHAAN), updateProfilePerusahaanController)
-router.put("/update", verifyToken, checkUserRole(ADMINSEKOLAH), updatePerusahaanController)
+router.put("/update", verifyToken, checkUserRole(ADMINSEKOLAH), upload.single('foto'), updatePerusahaanController)
 
 module.exports = router
