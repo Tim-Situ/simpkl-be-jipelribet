@@ -3,6 +3,8 @@ var Joi = require("joi")
 
 var pengumumanService = require("../../services/Pengumuman")
 
+const admin = require("firebase-admin");
+const serviceAccount = require("../../serviceAccountKey.json");
 
 async function handler(req, res) {
     var result = new BaseResponse()
@@ -31,6 +33,22 @@ async function handler(req, res) {
     })
 
     if (pengumumanBaru.success) {
+        const topic = "all-devices";
+
+        const message = {
+            notification: {
+                title: "Pengumuman!",
+                body: pengumuman,
+            },
+            topic,
+        };
+
+        try {
+            await admin.messaging().send(message);
+        } catch (error) {
+            res.status(500).send({ message: "Failed to send notification.", error });
+        }
+
         result.message = "Pengumuman berhasil ditambahkan..."
         result.data = pengumumanBaru.data
         res.json(result)
