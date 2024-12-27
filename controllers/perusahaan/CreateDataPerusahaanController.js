@@ -68,7 +68,7 @@ async function handler(req, res) {
         return res.status(500).json(result)
     }
 
-    var fileUrl = "https://gambarpkl.blob.core.windows.net/gambar-simpkl/1735315070-image-not-found.jpg";
+    var fileUrl = "https://gambarpkl.blob.core.windows.net/gambar-simpkl/1735320719-image-not-found.jpg";
 
     if (req.file) {
         const file = req.file;

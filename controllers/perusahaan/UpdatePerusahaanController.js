@@ -59,11 +59,6 @@ async function handler(req, res) {
     if(req.file) {
         try {
             foto = await uploadFile.uploadImageToAzure(req.file);
-
-            const url = dataPerusahaan.data.foto
-
-            const deleteFile = await uploadFile.deleteImageFromAzure(url)
-    
         } catch (error) {
             result.success = false
             result.message = "Terjadi kesalahan saat upload foto"
