@@ -1,6 +1,7 @@
 var Joi = require("joi")
 const BaseResponse = require("../../dto/BaseResponse")
 const {AKTIF, NONAKTIF, REJECT} = require("../../utils/constants")
+var uploadFile = require("../../dto/ManageFile")
 
 var userService = require("../../services/Users")
 var perusahaanService = require("../../services/Perusahaan")
