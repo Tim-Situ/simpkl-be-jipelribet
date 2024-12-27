@@ -74,6 +74,7 @@ async function handler(req, res) {
                             kompetensi_keahlian: true,
                         }
                     },
+                    foto: true,
                     kelompok_bimbingan: {
                         where: {
                             status: true
@@ -85,7 +86,8 @@ async function handler(req, res) {
                                     nama: true,
                                     alamat: true,
                                     no_hp: true,
-                                    status_aktif: true
+                                    status_aktif: true,
+                                    foto: true
                                 }
                             },
                             perusahaan: {
@@ -95,7 +97,8 @@ async function handler(req, res) {
                                     alamat: true,
                                     no_hp: true,
                                     email: true,
-                                    website: true
+                                    website: true,
+                                    foto: true
                                 }
                             }
                         }
