@@ -6,7 +6,7 @@ async function handler(req, res) {
     var result = new BaseResponse()
     var where, select, orderBy
 
-    var status = req.query.status
+    const status = req.query.status === 'true';
 
     where = {status}
     orderBy = {
