@@ -8,8 +8,7 @@ async function handler(req, res) {
 
     var status = req.query.status
 
-    where = {}
-    select = {status}
+    where = {status}
     orderBy = {
         createdAt: 'desc'
     }
