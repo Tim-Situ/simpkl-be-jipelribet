@@ -5,13 +5,14 @@ const BaseResponse = require("../../dto/BaseResponse")
 async function handler(req, res) {
     var result = new BaseResponse()
     var where, select, orderBy
-    var status = true
+
+    where = {}
 
     if(req.query.status){
-        status = req.query.status === 'true';
+        const status = req.query.status === 'true';
+        where = {status}
     }
-
-    where = {status}
+    
     orderBy = {
         createdAt: 'desc'
     }
