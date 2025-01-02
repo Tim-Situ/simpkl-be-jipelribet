@@ -9,8 +9,6 @@ var siswaService = require("../../services/Siswa")
 
 const moment = require('moment-timezone');
 
-// =====
-
 async function handler(req, res) {
     var result = new BaseResponse()
 
@@ -81,17 +79,6 @@ async function handler(req, res) {
         result.message = "Data kelompok bimbingan yang aktif tidak ditemukan..."
         return res.status(400).json(result)
     }
-
-    // var cekJurnalHarian = await jurnalHarianService.findOne({
-    //     tanggal,
-    //     id_bimbingan: dataKelompokBimbingan.data.id
-    // })
-
-    // if (cekJurnalHarian.success) {
-    //     result.success = false
-    //     result.message = "Jurnal pada hari ini sudah ada..."
-    //     return res.status(400).json(result)
-    // }
 
     try {
         // Ambil buffer file

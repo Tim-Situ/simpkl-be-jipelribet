@@ -6,8 +6,10 @@ async function handler(req, res) {
     var result = new BaseResponse()
     var where, select, orderBy
 
+    var status = req.query.status
+
     where = {}
-    select = {}
+    select = {status}
     orderBy = {
         createdAt: 'desc'
     }
