@@ -30,14 +30,14 @@ async function handler(req, res) {
 
     if(!dataUser.success){
         result.success = false
-        result.message = "wrong email or password"
+        result.message = "wrong email or password DB"
         return res.status(404).json(result)
     }
 
     const match = await bcrypt.compare(password, dataUser.data.password)
     if(!match){
         result.success = false
-        result.message = "wrong email or password"
+        result.message = "wrong email or password bc"
         return res.status(400).json(result)
     }
 
