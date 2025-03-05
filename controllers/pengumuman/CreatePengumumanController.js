@@ -44,7 +44,9 @@ async function handler(req, res) {
         };
 
         try {
-            await admin.messaging().send(message);
+            const responseNotif = await admin.messaging().send(message);
+            console.log("tes")
+            res.status(200).send({ message: "Notification sent!", responseNotif });
         } catch (error) {
             res.status(500).send({ message: "Failed to send notification.", error });
         }
