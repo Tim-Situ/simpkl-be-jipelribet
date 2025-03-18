@@ -17,10 +17,30 @@ if (!connectionString || !containerName) {
 const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
 const containerClient = blobServiceClient.getContainerClient(containerName);
 
+// Fungsi untuk mengecek apakah container tersedia
+async function checkAndCreateContainer() {
+    try {
+        console.log(`Checking if container "${containerName}" exists...`);
+        const exists = await containerClient.exists();
+
+        if (!exists) {
+            console.log(`Container "${containerName}" does not exist. Creating it...`);
+            await containerClient.create();
+            console.log(`Container "${containerName}" has been created.`);
+        } else {
+            console.log(`Container "${containerName}" already exists.`);
+        }
+    } catch (error) {
+        console.error("Error checking/creating container:", error.message);
+    }
+}
+
 async function handler(req, res) {
     const result = new BaseResponse();
 
     try {
+        await checkAndCreateContainer(); // Pastikan container tersedia sebelum upload
+
         if (!req.file) {
             result.success = false;
             result.message = "File gambar tidak ditemukan...";
