@@ -12,7 +12,7 @@ async function handler(req, res) {
     var schema = Joi.object({
         id: Joi.string().required(),
         catatan_pembimbing: Joi.string().required(),
-        status: Joi.string().required()
+        status: Joi.string().uppercase().valid('MENUNGGU', 'DITOLAK', 'DITERIMA').required(),
     })
 
     var { error, value } = schema.validate(req.body)
