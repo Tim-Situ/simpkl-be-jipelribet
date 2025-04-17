@@ -8,6 +8,14 @@ var siswaService = require("../../services/Siswa")
 
 const moment = require('moment-timezone');
 
+// Fungsi untuk parsing waktu ke UTC
+function parseTimeToUTC(timeString) {
+    let [hour, minute, second] = timeString.split(':');
+    const time = new Date();
+    time.setUTCHours(parseInt(hour), parseInt(minute), parseInt(second));
+    return time;
+}
+
 async function handler(req, res) {
     var result = new BaseResponse()
 
@@ -38,14 +46,6 @@ async function handler(req, res) {
 
     // const today = new Date();
     const today = moment().tz('Asia/Jakarta').format();
-    const startTime = new Date();
-    const endTime = new Date();
-
-    var [hour, minute, second] = jam_mulai.split(':');
-    startTime.setUTCHours(parseInt(hour), parseInt(minute), parseInt(second));
-
-    var [hour, minute, second] = jam_selesai.split(':');
-    endTime.setUTCHours(parseInt(hour), parseInt(minute), parseInt(second));
 
     if (tanggal > today) {
         result.success = false
@@ -95,8 +95,8 @@ async function handler(req, res) {
             jenis_pekerjaan,
             deskripsi_pekerjaan,
             bentuk_kegiatan, 
-            jam_mulai : startTime,
-            jam_selesai : endTime, 
+            jam_mulai : parseTimeToUTC(jam_mulai),
+            jam_selesai : parseTimeToUTC(jam_selesai), 
             staf,
             foto : fileUrl,
             createdBy: req.username
