@@ -29,7 +29,12 @@ async function registerAdminSekolah(data) {
 async function findUser(where){
     try {
         var dataUser = await user.findFirstOrThrow({
-            where
+            where, 
+            include:{
+                dataAdminSekolah: true,
+                dataGuruPembimbing: true,
+                dataSiswa: true
+            }
         })
 
         return {success: true, data: dataUser}     
