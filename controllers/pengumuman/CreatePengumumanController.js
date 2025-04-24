@@ -32,33 +32,33 @@ async function handler(req, res) {
         createdBy: req.username
     })
 
-    if (pengumumanBaru.success) {
-        const topic = "all-devices";
+    // if (pengumumanBaru.success) {
+    //     const topic = "all-devices";
 
-        const message = {
-            notification: {
-                title: "Pengumuman!",
-                body: pengumuman,
-            },
-            topic,
-        };
+    //     const message = {
+    //         notification: {
+    //             title: "Pengumuman!",
+    //             body: pengumuman,
+    //         },
+    //         topic,
+    //     };
 
-        try {
-            const responseNotif = await admin.messaging().send(message);
-            console.log("tes")
-            res.status(200).send({ message: "Notification sent!", responseNotif });
-        } catch (error) {
-            res.status(500).send({ message: "Failed to send notification.", error });
-        }
+    //     try {
+    //         const responseNotif = await admin.messaging().send(message);
+    //         console.log("tes")
+    //         res.status(200).send({ message: "Notification sent!", responseNotif });
+    //     } catch (error) {
+    //         res.status(500).send({ message: "Failed to send notification.", error });
+    //     }
 
-        result.message = "Pengumuman berhasil ditambahkan..."
-        result.data = pengumumanBaru.data
-        res.json(result)
-    } else {
-        result.success = false
-        result.message = "Internal Server Error"
-        res.status(500).json(result)
-    }
+    //     result.message = "Pengumuman berhasil ditambahkan..."
+    //     result.data = pengumumanBaru.data
+    //     res.json(result)
+    // } else {
+    //     result.success = false
+    //     result.message = "Internal Server Error"
+    //     res.status(500).json(result)
+    // }
 }
 
 module.exports = handler
