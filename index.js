@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:3000", "https://simpkl.haululazkiyaa.id"],
+    origin: ["http://localhost:3000", "https://simpkl.haululazkiyaa.id", "https://jipelribet.onrender.com"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })

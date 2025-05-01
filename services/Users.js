@@ -30,11 +30,11 @@ async function findUser(where){
     try {
         var dataUser = await user.findFirstOrThrow({
             where, 
-            include:{
-                dataAdminSekolah: true,
-                dataGuruPembimbing: true,
-                dataSiswa: true
-            }
+            // include:{
+            //     dataAdminSekolah: true,
+            //     dataGuruPembimbing: true,
+            //     dataSiswa: true
+            // }
         })
 
         return {success: true, data: dataUser}     

@@ -44,11 +44,11 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    if(cekSiswa.success && !cekSiswa.data.status_aktif){
-        result.success = false
-        result.message = "Data siswa sudah tidak aktif..."
-        return res.status(400).json(result)
-    }
+    // if(cekSiswa.success && !cekSiswa.data.status_aktif){
+    //     result.success = false
+    //     result.message = "Data siswa sudah tidak aktif..."
+    //     return res.status(400).json(result)
+    // }
 
     var cekGuruPembimbing = await guruPembimbingService.findOne({
         id: id_guru_pembimbing
@@ -60,11 +60,11 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    if(cekGuruPembimbing.success && !cekGuruPembimbing.data.status_aktif){
-        result.success = false
-        result.message = "Data guru pembimbing sudah tidak aktif..."
-        return res.status(400).json(result)
-    }
+    // if(cekGuruPembimbing.success && !cekGuruPembimbing.data.status_aktif){
+    //     result.success = false
+    //     result.message = "Data guru pembimbing sudah tidak aktif..."
+    //     return res.status(400).json(result)
+    // }
 
     var cekPerusahaan = await perusahaanService.findOne({
         id: id_perusahaan
@@ -76,22 +76,22 @@ async function handler(req, res) {
         return res.status(400).json(result)
     }
 
-    if(cekPerusahaan.success && cekPerusahaan.data.status != AKTIF){
-        result.success = false
-        result.message = "Data perusahaan tidak aktif..."
-        return res.status(400).json(result)
-    }
+    // if(cekPerusahaan.success && cekPerusahaan.data.status != AKTIF){
+    //     result.success = false
+    //     result.message = "Data perusahaan tidak aktif..."
+    //     return res.status(400).json(result)
+    // }
 
     var cekKelompokBimbingan = await kelompokBimbinganService.findOne({
         id_siswa,
         id_perusahaan
     })
 
-    if(cekKelompokBimbingan.success){
-        result.success = false
-        result.message = "Data siswa sudah terdaftar sebelumnya pada perusahaan yang dipilih..."
-        return res.status(400).json(result)
-    }
+    // if(cekKelompokBimbingan.success){
+    //     result.success = false
+    //     result.message = "Data siswa sudah terdaftar sebelumnya pada perusahaan yang dipilih..."
+    //     return res.status(400).json(result)
+    // }
 
     cekKelompokBimbingan = await kelompokBimbinganService.findOne({
         id_siswa

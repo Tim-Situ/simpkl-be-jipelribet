@@ -31,27 +31,27 @@ async function handler(req, res) {
         return res.status(404).json(result)
     }
 
-    if(status == true){
-        var tahunAjaranAktif = await tahunAjaranService.findOne({
-            status : true
-        })
+    // if(status == true){
+    //     var tahunAjaranAktif = await tahunAjaranService.findOne({
+    //         status : true
+    //     })
     
-        if (tahunAjaranAktif.success) {
-            var nonAktifTahunAjaran = await tahunAjaranService.updateStatus(
-                tahunAjaranAktif.data.id,
-                {
-                    status : false,
-                    updatedBy : req.username
-                }
-            )
+    //     if (tahunAjaranAktif.success) {
+    //         var nonAktifTahunAjaran = await tahunAjaranService.updateStatus(
+    //             tahunAjaranAktif.data.id,
+    //             {
+    //                 status : false,
+    //                 updatedBy : req.username
+    //             }
+    //         )
     
-            if (!nonAktifTahunAjaran.success) {
-                result.success = false
-                result.message = "Internal Server Error"
-                return res.status(500).json(result)
-            }
-        }
-    }
+    //         if (!nonAktifTahunAjaran.success) {
+    //             result.success = false
+    //             result.message = "Internal Server Error"
+    //             return res.status(500).json(result)
+    //         }
+    //     }
+    // }
 
     var updatedStatusTahunAjaran = await tahunAjaranService.updateStatus(
         tahunAjaran.data.id,

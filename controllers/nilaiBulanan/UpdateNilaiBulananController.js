@@ -10,7 +10,7 @@ async function handler(req, res) {
 
     var schema = Joi.object({
         id : Joi.string().required(),
-        nilai: Joi.number().integer().min(0).max(100).allow(null, ''),
+        nilai: Joi.number().integer().allow(null, ''),
         deskripsi: Joi.string().allow(null, '')
     })
 

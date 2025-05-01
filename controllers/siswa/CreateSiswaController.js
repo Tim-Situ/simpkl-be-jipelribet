@@ -48,16 +48,6 @@ async function handler(req, res) {
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(password.data, salt)
 
-    var cekUsername = await userService.findUser({
-        username : nisn
-    })
-
-    if(cekUsername.success){
-        result.success = false
-        result.message = "NISN sudah digunakan..."
-        return res.status(400).json(result)
-    }
-
     var cekJurusan = await jurusanService.findOne({
         id : id_jurusan
     })

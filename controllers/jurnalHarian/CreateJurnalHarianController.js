@@ -47,11 +47,11 @@ async function handler(req, res) {
     var [hour, minute, second] = jam_selesai.split(':');
     endTime.setUTCHours(parseInt(hour), parseInt(minute), parseInt(second));
 
-    if (tanggal > today) {
-        result.success = false
-        result.message = "Tidak bisa upload jurnal pada tanggal tersebut..."
-        return res.status(400).json(result)
-    }
+    // if (tanggal > today) {
+    //     result.success = false
+    //     result.message = "Tidak bisa upload jurnal pada tanggal tersebut..."
+    //     return res.status(400).json(result)
+    // }
 
     if (!req.file) {
         result.success = false

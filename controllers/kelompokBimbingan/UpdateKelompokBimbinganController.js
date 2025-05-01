@@ -71,11 +71,11 @@ async function handler(req, res) {
             return res.status(400).json(result)
         }
 
-        if(cekGuruPembimbing.success && !cekGuruPembimbing.data.status_aktif){
-            result.success = false
-            result.message = "Data guru pembimbing sudah tidak aktif..."
-            return res.status(400).json(result)
-        }
+        // if(cekGuruPembimbing.success && !cekGuruPembimbing.data.status_aktif){
+        //     result.success = false
+        //     result.message = "Data guru pembimbing sudah tidak aktif..."
+        //     return res.status(400).json(result)
+        // }
     }
 
     if (id_perusahaan) {
@@ -89,11 +89,11 @@ async function handler(req, res) {
             return res.status(400).json(result)
         }
 
-        if(cekPerusahaan.success && cekPerusahaan.data.status != AKTIF){
-            result.success = false
-            result.message = "Data perusahaan tidak aktif..."
-            return res.status(400).json(result)
-        }
+        // if(cekPerusahaan.success && cekPerusahaan.data.status != AKTIF){
+        //     result.success = false
+        //     result.message = "Data perusahaan tidak aktif..."
+        //     return res.status(400).json(result)
+        // }
 
         var cekKelompokBimbingan = await kelompokBimbinganService.findOne({
             id_siswa : dataKelompokBimbingan.data.id_siswa,

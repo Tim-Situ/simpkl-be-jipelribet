@@ -15,7 +15,7 @@ async function handler(req, res) {
     data: Joi.array().items(
       Joi.object({
         id_aspek_penilaian: Joi.string().required(),
-        nilai: Joi.number().integer().min(0).max(100).required(),
+        nilai: Joi.number().integer().required(),
         keterangan: Joi.string().required(),
       })
     ),
